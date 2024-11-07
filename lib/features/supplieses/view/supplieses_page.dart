@@ -6,7 +6,16 @@ class SuppliesesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Test')),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: const Stack(
+          children: [
+            Positioned.fill(
+                child: Align(alignment: Alignment.center, child: Text('0'))),
+            Icon(Icons.check_box_outline_blank, size: 48)
+          ],
+        ),
+      ),
       body: const Center(
         child: Text('Test'),
       ),
