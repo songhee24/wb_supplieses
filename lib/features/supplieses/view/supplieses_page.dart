@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wb_supplieses/features/supplieses/bloc/supplies_bloc.dart';
+import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 class SuppliesesPage extends StatelessWidget {
   const SuppliesesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -42,9 +43,11 @@ class SuppliesesPage extends StatelessWidget {
                     ),
                   ),
                 ])),
-        body: const Center(
-          child: Text('Test'),
-        ),
+        body: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: SuppliesCard(id: 1),
+            )),
       ),
     );
   }
