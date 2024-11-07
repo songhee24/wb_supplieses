@@ -5,4 +5,12 @@ sealed class SuppliesEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class SuppliesAdd extends SuppliesEvent {}
+ final class SuppliesAddNewEvent extends SuppliesEvent {
+   final int id;
+   final int suppliesCount;
+
+   SuppliesAddNewEvent({required this.id, required this.suppliesCount});
+
+   @override
+   List<Object> get props => [id, suppliesCount];
+ }

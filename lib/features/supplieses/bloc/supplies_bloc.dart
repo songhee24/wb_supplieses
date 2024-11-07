@@ -7,10 +7,19 @@ part 'supplies_state.dart';
 
 class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
   SuppliesBloc() : super(const SuppliesState()) {
-    on<SuppliesEvent>(
-     _onCreateSupplies,
+    on<SuppliesAddNewEvent>(
+     _onAddNewSupplies,
     );
   }
 
-  Future<void> _onCreateSupplies(SuppliesEvent event, Emitter<SuppliesState> emit) async {}
+  Future<void> _onAddNewSupplies(SuppliesAddNewEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.initial));
+      final newSupply = Supplies(id: event.id, suppliesCount: event.suppliesCount);
+      final updatedSupplies = List<Supplies>.from(state.supplieses)..add(newSupply);
+      emit(SuppliesState(supplieses: updatedSupplies));
+    } catch(e) {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
 }
