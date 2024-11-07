@@ -12,15 +12,17 @@ class LayoutScaffold extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: navigationShell.goBranch,
-        indicatorColor: Theme.of(context).primaryColor,
-        destinations: destinations.map((destination) => NavigationDestination(
-          icon: Icon(destination.icon),
-          label: destination.label,
-          selectedIcon: Icon(destination.icon, color: Colors.white,),
-        )).toList()
-      ),
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: navigationShell.goBranch,
+          indicatorColor: Colors.transparent,
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          destinations: destinations
+              .map((destination) => NavigationDestination(
+                  icon: Icon(destination.icon),
+                  label: destination.label,
+                  selectedIcon: Icon(destination.icon,
+                      color: Theme.of(context).primaryColor)))
+              .toList()),
     );
   }
 }
