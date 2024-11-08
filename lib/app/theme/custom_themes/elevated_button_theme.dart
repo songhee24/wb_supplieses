@@ -21,10 +21,10 @@ class TElevatedButtonTheme {
       style: ElevatedButton.styleFrom(
           elevation: 0,
           foregroundColor: Colors.white,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.white.withOpacity(0.2),
           disabledForegroundColor: Colors.grey,
-          disabledBackgroundColor: Colors.grey,
-          side: const BorderSide(color: Colors.blue),
+          disabledBackgroundColor: Colors.grey.withOpacity(0.2),
+          side: const BorderSide(color: Colors.white70),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           textStyle: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))

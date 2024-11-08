@@ -1,6 +1,6 @@
 final class Supplies {
   final int id;
-  final int suppliesCount;
+  final int boxCount;
 
-  Supplies({required this.id, required this.suppliesCount});
+  Supplies({required this.id, required this.boxCount});
 }
