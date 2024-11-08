@@ -15,9 +15,9 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
   Future<void> _onAddNewSupplies(SuppliesCreateNewEvent event, Emitter<SuppliesState> emit) async {
     try {
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.initial));
-      final newSupply = Supplies(id: event.id, boxCount: event.suppliesCount);
-      final updatedSupplies = List<Supplies>.from(state.supplieses)..add(newSupply);
-      emit(SuppliesState(supplieses: updatedSupplies, suppliesStatus: SuppliesStatus.success, createdAt: DateTime.now()));
+      // final newSupply = Supplies(id: event.id, boxCount: event.suppliesCount);
+      // final updatedSupplies = List<Supplies>.from(state.supplieses)..add(newSupply);
+      // emit(SuppliesState(supplieses: updatedSupplies, suppliesStatus: SuppliesStatus.success, createdAt: DateTime.now()));
     } catch(e) {
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
     }

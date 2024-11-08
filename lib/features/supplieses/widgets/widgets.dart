@@ -1,1 +1,1 @@
-export 'supplies_card.dart';
+export 'supplies/supplies_card.dart';
