@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "373094242188",
+    "firebase_url": "https://flutter-http-299a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "flutter-http-299a3",
+    "storage_bucket": "flutter-http-299a3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373094242188:android:434323018e8605e01ae8a9",
+        "android_client_info": {
+          "package_name": "com.beshop.wbsupplieses"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "373094242188-cpieugv4ofoomenvgh4r3dad4p0tm183.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJebNJ0akLBKDqbRg8BUyVuCZNegZvss8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "373094242188-cpieugv4ofoomenvgh4r3dad4p0tm183.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
