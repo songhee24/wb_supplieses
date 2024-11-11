@@ -19,11 +19,10 @@ class LayoutScaffold extends StatelessWidget {
 
     return Scaffold(
       extendBody: true,
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent,
       body: Container(
           decoration: BoxDecoration(gradient: gradient),
-          child: navigationShell),
+          child: SafeArea(bottom: false, child: navigationShell)),
       bottomNavigationBar: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(25)),
         child: BackdropFilter(

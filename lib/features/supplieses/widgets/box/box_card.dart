@@ -16,7 +16,7 @@ class BoxCard extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             width: double.infinity,
-            height: 250,
+            height: 350,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 begin: Alignment.centerLeft,
