@@ -17,34 +17,35 @@ class LayoutScaffold extends StatelessWidget {
         end: Alignment.bottomLeft,
         tileMode: TileMode.clamp);
 
-    return Container(
-      decoration: BoxDecoration(gradient: gradient),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: navigationShell,
-        bottomNavigationBar: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(25)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 15),
-            child: NavigationBar(
-                elevation: 0,
-                selectedIndex: navigationShell.currentIndex,
-                onDestinationSelected: navigationShell.goBranch,
-                backgroundColor: Colors.grey.withOpacity(0.11),
-                indicatorColor: Colors.transparent,
-                labelBehavior:
-                    NavigationDestinationLabelBehavior.onlyShowSelected,
-                destinations: destinations
-                    .map(
-                      (destination) => NavigationDestination(
-                        icon: Icon(destination.icon),
-                        label: destination.label,
-                        selectedIcon: Icon(destination.icon,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                    )
-                    .toList()),
-          ),
+    return Scaffold(
+      extendBody: true,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: Container(
+          decoration: BoxDecoration(gradient: gradient),
+          child: navigationShell),
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(25)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 15),
+          child: NavigationBar(
+              surfaceTintColor: Colors.amber,
+              elevation: 0,
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: navigationShell.goBranch,
+              backgroundColor: Colors.grey.withOpacity(0.11),
+              indicatorColor: Colors.transparent,
+              labelBehavior:
+                  NavigationDestinationLabelBehavior.onlyShowSelected,
+              destinations: destinations
+                  .map(
+                    (destination) => NavigationDestination(
+                      icon: Icon(destination.icon),
+                      label: destination.label,
+                      selectedIcon: Icon(destination.icon, color: Colors.white),
+                    ),
+                  )
+                  .toList()),
         ),
       ),
     );

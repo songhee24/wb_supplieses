@@ -12,18 +12,12 @@ class SuppliesAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Stack(
-            children: [
-              BlocBuilder<SuppliesBloc, SuppliesState>(
-                builder: (context, state) {
-                  return Positioned.fill(
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Text('${state.supplieses.length}')));
-                },
-              ),
-              const Icon(Icons.check_box_outline_blank, size: 40)
-            ],
+          BlocBuilder<SuppliesBloc, SuppliesState>(
+            builder: (context, state) {
+              return Align(
+                  alignment: Alignment.center,
+                  child: Text('${state.supplieses.length}'));
+            },
           ),
           ElevatedButton(
             onPressed: onAddBox,
