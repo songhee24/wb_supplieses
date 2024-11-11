@@ -8,42 +8,30 @@ class SuppliesesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: SuppliesAppBar(onAddBox: () {
-          showModalBottomSheet<void>(
-            useRootNavigator: true,
-            barrierColor: Colors.transparent,
-            context: context,
-            builder: (BuildContext context) {
-              return const BoxFormBottomSheet();
-            },
-          );
-        },),
+        appBar: SuppliesAppBar(
+          onAddBox: () {
+            showModalBottomSheet<void>(
+              useRootNavigator: true,
+              barrierColor: Colors.transparent,
+              context: context,
+              builder: (BuildContext context) {
+                return const BoxFormBottomSheet();
+              },
+            );
+          },
+        ),
         body: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: SingleChildScrollView(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Card(
-                  color: Colors.white,
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 300,
-                  ),
-                ),
-                Card(
-                  color: Colors.white,
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 300,
-                  ),
-                ),
-                Card(
-                  color: Colors.white,
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 300,
-                  ),
-                )
+                BoxCard(id: 0),
+                SizedBox(height: 8),
+                BoxCard(id: 0),
+                SizedBox(height: 8),
+                BoxCard(id: 0),
+                SizedBox(height: 8),
               ],
             ),
           ),

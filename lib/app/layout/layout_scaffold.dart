@@ -12,7 +12,7 @@ class LayoutScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LinearGradient gradient = const LinearGradient(
-        colors: [Color(0xff4a4460), Color(0xff1c1925), Color(0xff4e4e4e)],
+        colors: [Color(0xff33265a), Color(0xff1c1925), Color(0xff382375)],
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         tileMode: TileMode.clamp);
