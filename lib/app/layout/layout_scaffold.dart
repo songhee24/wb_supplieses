@@ -22,24 +22,30 @@ class LayoutScaffold extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: navigationShell,
-        bottomNavigationBar: NavigationBar(
-            elevation: 0,
-            selectedIndex: navigationShell.currentIndex,
-            onDestinationSelected: navigationShell.goBranch,
-            backgroundColor: Colors.transparent,
-            indicatorColor: Colors.transparent,
-            labelBehavior:
-                NavigationDestinationLabelBehavior.onlyShowSelected,
-            destinations: destinations
-                .map(
-                  (destination) => NavigationDestination(
-                    icon: Icon(destination.icon),
-                    label: destination.label,
-                    selectedIcon: Icon(destination.icon,
-                        color: Theme.of(context).primaryColor),
-                  ),
-                )
-                .toList()),
+        bottomNavigationBar: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(25)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 15),
+            child: NavigationBar(
+                elevation: 0,
+                selectedIndex: navigationShell.currentIndex,
+                onDestinationSelected: navigationShell.goBranch,
+                backgroundColor: Colors.grey.withOpacity(0.11),
+                indicatorColor: Colors.transparent,
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.onlyShowSelected,
+                destinations: destinations
+                    .map(
+                      (destination) => NavigationDestination(
+                        icon: Icon(destination.icon),
+                        label: destination.label,
+                        selectedIcon: Icon(destination.icon,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    )
+                    .toList()),
+          ),
+        ),
       ),
     );
   }

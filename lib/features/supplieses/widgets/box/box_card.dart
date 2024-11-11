@@ -30,12 +30,12 @@ class BoxCard extends StatelessWidget {
               height: 250,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.white, width: 0.5),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
-                    end: Alignment.topRight,
+                    end: Alignment.bottomRight,
                     colors: [
                       Colors.black,
-                      Colors.black,
+                      Colors.black54,
                     ],
                   ),
                   color: Colors.grey[350]!.withOpacity(0.1),
