@@ -11,13 +11,14 @@ class BoxCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(children: [
       ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             width: double.infinity,
-            height: 350,
+            height: 250,
             decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(25)),
+              // border: Border.all(color: Color(0xFF235F75), width: 1),
               gradient: const LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.bottomRight,
@@ -26,7 +27,7 @@ class BoxCard extends StatelessWidget {
                   Colors.black54,
                 ],
               ),
-              color: Colors.grey[350]!.withOpacity(0.7),
+              color: Colors.grey[350]!.withOpacity(0.4),
             ),
           ),
         ),
