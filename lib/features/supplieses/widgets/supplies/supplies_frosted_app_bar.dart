@@ -25,12 +25,22 @@ class FrostedAppBar extends StatelessWidget {
         flexibleSpace: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: const SizedBox(
-              height: kToolbarHeightCustom,
-              child: TabBar(
-                padding: EdgeInsets.only(top: kToolbarHeightCustom - 60),
-                dividerColor: Colors.transparent,
-                tabs: [Tab(text: 'Поставки'), Tab(text: 'Коробки')],
+            child:  SizedBox(
+              height: kToolbarHeightCustom ,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  padding: const EdgeInsets.only(top: kToolbarHeight + 15),
+                  dividerColor: Colors.transparent,
+                  tabs: const [Tab(text: 'Поставки'), Tab(text: 'Коробки')],
+                  indicator: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50), // Creates border
+                      color: Colors.purpleAccent.withOpacity(0.5)
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.grey,
+                ),
               ),
             ),
           ),
