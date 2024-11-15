@@ -1,8 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wb_supplieses/app/router/bottom_destination.dart';
+import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
+import 'package:wb_supplieses/features/supplieses/widgets/supplies/supplies_form_bottom_sheet.dart';
 
 class LayoutScaffold extends StatelessWidget {
   const LayoutScaffold({required this.navigationShell, super.key});
@@ -21,10 +24,24 @@ class LayoutScaffold extends StatelessWidget {
       extendBody: true,
       backgroundColor: Colors.transparent,
       // Add FloatingActionButton
-      floatingActionButton: navigationShell.currentIndex == 0 ? FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: navigationShell.currentIndex == 0
+          ? BlocBuilder<SuppliesTabIndexCubit, int>(
+        builder: (context, selectedTabIndex) {
+          return FloatingActionButton(
+            onPressed: () {
+              if (selectedTabIndex == 0) {
+                showModalBottomSheet(context: context, builder: (BuildContext context)  {
+                  return const SuppliesFormBottomSheet();
+                });
+              } else if (selectedTabIndex == 1) {
+                // Action for the second tab
+              }
+            },
+            child: const Icon(Icons.add),
+          );
+        },
+      )
+          : null,
       // Set the FAB location
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: Container(

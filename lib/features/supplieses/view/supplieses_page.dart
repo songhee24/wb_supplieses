@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 class SuppliesesPage extends StatefulWidget {
@@ -15,8 +17,13 @@ class _SuppliesesPageState extends State<SuppliesesPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-        length: 2, vsync: this); // Create a TabController with 2 tabs
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        context.read<SuppliesTabIndexCubit>().setTabIndex(_tabController.index);
+      }
+    });
   }
 
   @override
@@ -38,23 +45,26 @@ class _SuppliesesPageState extends State<SuppliesesPage>
             padding: const EdgeInsets.only(
                 bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
             sliver: SliverList(
-                delegate: SliverChildListDelegate([
+              delegate: SliverChildListDelegate(
+                [
                   AnimatedBuilder(
                     animation: _tabController,
                     builder: (context, child) {
                       return Column(
                         children: [
-                          SizedBox(height: 8),
                           _tabController.index == 0
                               ? _buildSupplyTabContent()
-                              : Center(child: Text('box'),),
+                              : const Center(
+                                  child: Text('box'),
+                                ),
                         ],
                       );
                     },
                   ),
-
-              // SizedBox(height: kBottomNavigationBarHeight + 70),
-            ])),
+                  // SizedBox(height: kBottomNavigationBarHeight + 70),
+                ],
+              ),
+            ),
           )
         ],
       ),
