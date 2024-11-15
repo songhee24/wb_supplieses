@@ -6,11 +6,11 @@ sealed class SuppliesEvent extends Equatable {
 }
 
  final class SuppliesCreateNewEvent extends SuppliesEvent {
-   final int id;
-   final int suppliesCount;
+   final int boxCount;
+   final String name;
 
-   SuppliesCreateNewEvent({required this.id, required this.suppliesCount});
+   SuppliesCreateNewEvent({required this.name,  this.boxCount = 0});
 
    @override
-   List<Object> get props => [id, suppliesCount];
+   List<Object> get props => [name, boxCount];
  }

@@ -1,6 +1,6 @@
 part of 'supplies_bloc.dart';
 
-enum SuppliesStatus { initial, success, failure }
+enum SuppliesStatus { initial, loading, success, failure }
 
 final class SuppliesState extends Equatable {
   final SuppliesStatus suppliesStatus;
