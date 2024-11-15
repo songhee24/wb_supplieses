@@ -19,16 +19,15 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
   Future<void> _onAddNewSupplies(
       SuppliesCreateNewEvent event, Emitter<SuppliesState> emit) async {
     try {
-      emit(const SuppliesState(suppliesStatus: SuppliesStatus.loading));
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
       final newSupply =
           Supplies(createdAt: DateTime.timestamp(), name: event.name, boxCount: event.boxCount);
       await suppliesRepository.addSupply(newSupply);
-      // Optionally, fetch updated list to reflect the change
-      // add(SuppliesFetch());
+
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
-    } finally {
-      emit(const SuppliesState(suppliesStatus: SuppliesStatus.initial));
     }
   }
 }
