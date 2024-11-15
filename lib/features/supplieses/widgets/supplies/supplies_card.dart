@@ -18,7 +18,7 @@ class SuppliesCard extends StatelessWidget {
             width: double.infinity,
             height: 90,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(25)),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
               // border: Border.all(color: Color(0xFF235F75), width: 1),
               gradient: const LinearGradient(
                 begin: Alignment.centerLeft,
@@ -30,9 +30,21 @@ class SuppliesCard extends StatelessWidget {
               ),
               color: Colors.grey[350]!.withOpacity(0.4),
             ),
-            child: Column(children: [
-              Text(supplies.name)
-            ],),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  Text(supplies.name),
+                  Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                    Text('${supplies.boxCount}'),
+                    const SizedBox(width: 4),
+                    Image.asset('lib/assets/box.png', width: 28, height: 28,)
+                  ],)
+                ],)
+              ],),
+            ),
           ),
         ),
       )
