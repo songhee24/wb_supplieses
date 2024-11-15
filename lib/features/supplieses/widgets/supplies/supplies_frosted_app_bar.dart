@@ -28,7 +28,7 @@ class FrostedAppBar extends StatelessWidget {
             child:  SizedBox(
               height: kToolbarHeightCustom ,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,
                   padding: const EdgeInsets.only(top: kToolbarHeight + 15),

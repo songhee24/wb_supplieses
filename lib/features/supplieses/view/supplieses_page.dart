@@ -12,7 +12,8 @@ class SuppliesesPage extends StatelessWidget {
         slivers: [
           const FrostedAppBar(),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight + 70, left: 16, right: 16),
+            padding: const EdgeInsets.only(
+                bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
             sliver: SliverList(
                 delegate: SliverChildListDelegate([
               SizedBox(height: 8),
