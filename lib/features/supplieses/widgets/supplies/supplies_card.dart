@@ -1,11 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 class SuppliesCard extends StatelessWidget {
-  final int id;
+  final Supplies supplies;
 
-  const SuppliesCard({super.key, required this.id});
+  const SuppliesCard({super.key, required this.supplies});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,9 @@ class SuppliesCard extends StatelessWidget {
               ),
               color: Colors.grey[350]!.withOpacity(0.4),
             ),
+            child: Column(children: [
+              Text(supplies.name)
+            ],),
           ),
         ),
       )

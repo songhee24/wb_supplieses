@@ -4,10 +4,9 @@ import 'package:wb_supplieses/features/supplieses/data/repositories/supplies_fir
 import 'package:wb_supplieses/features/supplieses/models/models.dart';
 
 part 'supplies_event.dart';
-
 part 'supplies_state.dart';
 
-class SuppliesBloc extends Bloc<SuppliesGetEvent, SuppliesState> {
+class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
   final SuppliesFirestoreRepository suppliesRepository;
 
   SuppliesBloc(this.suppliesRepository) : super(const SuppliesState()) {

@@ -24,6 +24,8 @@ class _SuppliesesPageState extends State<SuppliesesPage>
         context.read<SuppliesTabIndexCubit>().setTabIndex(_tabController.index);
       }
     });
+
+    context.read<SuppliesBloc>().add(SuppliesGetEvent());
   }
 
   @override
@@ -44,42 +46,80 @@ class _SuppliesesPageState extends State<SuppliesesPage>
           SliverPadding(
             padding: const EdgeInsets.only(
                 bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  AnimatedBuilder(
-                    animation: _tabController,
-                    builder: (context, child) {
-                      return Column(
-                        children: [
-                          _tabController.index == 0
-                              ? _buildSupplyTabContent()
-                              : const Center(
-                                  child: Text('box'),
-                                ),
-                        ],
-                      );
-                    },
+            sliver: AnimatedBuilder(
+              animation: _tabController,
+              builder: (context, child) {
+                return _tabController.index == 0
+                    ? _buildSupplyTabContent()
+                    : const SliverToBoxAdapter(
+                  child: Center(
+                    child: Text('box'),
                   ),
-                  // SizedBox(height: kBottomNavigationBarHeight + 70),
-                ],
-              ),
+                );
+              },
             ),
           )
         ],
       ),
     );
   }
-}
 
-Widget _buildSupplyTabContent() {
-  return const Column(
-    children: [
-      SuppliesCard(id: 0),
-      SizedBox(height: 8),
-      SuppliesCard(id: 1),
-      SizedBox(height: 8),
-      SuppliesCard(id: 2),
-    ],
-  );
+  Widget _buildSupplyTabContent() {
+    return BlocBuilder<SuppliesBloc, SuppliesState>(
+      builder: (context, state) {
+        if (state.suppliesStatus == SuppliesStatus.loading) {
+          return const SliverToBoxAdapter(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (state.suppliesStatus == SuppliesStatus.failure) {
+          return SliverToBoxAdapter(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Failed to load supplies'),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<SuppliesBloc>().add(SuppliesGetEvent());
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (state.supplieses.isEmpty) {
+          return const SliverToBoxAdapter(
+            child: Center(
+              child: Text('No supplies found'),
+            ),
+          );
+        }
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (context, index) {
+              final supply = state.supplieses[index];
+              return Column(
+                children: [
+                  SuppliesCard(
+                    supplies: supply, // Assuming SuppliesCard accepts a supply parameter
+                  ),
+                  if (index < state.supplieses.length - 1)
+                    const SizedBox(height: 8),
+                ],
+              );
+            },
+            childCount: state.supplieses.length,
+          ),
+        );
+      },
+    );
+  }
 }
