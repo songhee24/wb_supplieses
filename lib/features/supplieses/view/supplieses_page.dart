@@ -75,11 +75,11 @@ class _SuppliesesPageState extends State<SuppliesesPage>
 Widget _buildSupplyTabContent() {
   return const Column(
     children: [
-      BoxCard(id: 0),
+      SuppliesCard(id: 0),
       SizedBox(height: 8),
-      BoxCard(id: 1),
+      SuppliesCard(id: 1),
       SizedBox(height: 8),
-      BoxCard(id: 2),
+      SuppliesCard(id: 2),
     ],
   );
 }

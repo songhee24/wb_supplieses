@@ -1,11 +1,11 @@
  part of 'supplies_bloc.dart';
 
-sealed class SuppliesEvent extends Equatable {
+sealed class SuppliesGetEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
 
- final class SuppliesCreateNewEvent extends SuppliesEvent {
+ final class SuppliesCreateNewEvent extends SuppliesGetEvent {
    final int boxCount;
    final String name;
 
