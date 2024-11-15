@@ -52,6 +52,7 @@ class LayoutScaffold extends StatelessWidget {
                   // Calculate the middle index
 
                   return InkResponse(
+                    radius: 20,
                     onTap: () => navigationShell.goBranch(idx),
                     child: SizedBox(
                       width: 150,
