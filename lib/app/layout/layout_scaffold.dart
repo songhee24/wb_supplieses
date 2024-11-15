@@ -30,7 +30,9 @@ class LayoutScaffold extends StatelessWidget {
           return FloatingActionButton(
             onPressed: () {
               if (selectedTabIndex == 0) {
-                showModalBottomSheet(context: context, builder: (BuildContext context)  {
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context, builder: (BuildContext context)  {
                   return const SuppliesFormBottomSheet();
                 });
               } else if (selectedTabIndex == 1) {
