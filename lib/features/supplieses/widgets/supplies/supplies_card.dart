@@ -19,7 +19,7 @@ class SuppliesCard extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             width: double.infinity,
-            height: 90,
+            height: 100,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
               // border: Border.all(color: Color(0xFF235F75), width: 1),
@@ -60,11 +60,48 @@ class SuppliesCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Text('Cозданно:', style: TextStyle(color: Colors.grey)),
-                  Text(
-                      '${formattedDate.split(" ")[0]}'
-                      '${formattedDate.split(" ")[1]}',
-                      style: const TextStyle(color: Colors.grey)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Cозданно:',
+                                style: TextStyle(color: Colors.grey)),
+                            Text(
+                                '${formattedDate.split(" ")[0]}'
+                                '${formattedDate.split(" ")[1]}',
+                                style: const TextStyle(color: Colors.grey)),
+                          ]),
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: PopupMenuButton(
+                          onSelected: (value) {},
+                          padding: EdgeInsets.zero,
+                          iconSize: 20,
+                          icon: const Icon(Icons.more_vert),
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              const PopupMenuItem(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Text('Удалить')),
+                              const PopupMenuItem(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Text('Изменить'))
+                            ];
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
             ),
