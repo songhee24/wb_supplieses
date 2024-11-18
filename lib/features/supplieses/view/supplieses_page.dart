@@ -81,7 +81,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Failed to load supplies'),
+                  const Text('Что то пошло не так('),
                   ElevatedButton(
                     onPressed: () {
                       context.read<SuppliesBloc>().add(SuppliesGetEvent());
@@ -97,7 +97,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
         if (state.supplieses.isEmpty) {
           return const SliverToBoxAdapter(
             child: Center(
-              child: Text('No supplies found'),
+              child: Text('Поставок нет'),
             ),
           );
         }

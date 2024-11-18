@@ -56,7 +56,7 @@ class LayoutScaffold extends StatelessWidget {
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(25)),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 15),
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: BottomAppBar(
               // Add the notched shape
               shape: const CircularNotchedRectangle(),
