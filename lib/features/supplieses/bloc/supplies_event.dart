@@ -20,3 +20,11 @@ final class SuppliesGetEvent extends SuppliesEvent {
   List<Object> get props => [];
 }
 
+final class SuppliesDeleteEvent extends SuppliesEvent {
+  final String suppliesId;
+
+  SuppliesDeleteEvent({required this.suppliesId});
+
+  @override
+  List<Object> get props => [suppliesId];
+}

@@ -16,4 +16,11 @@ class SuppliesFirestoreRepository {
     }).toList();
   }
 
+  Future<void> deleteSupply(String suppliesId) async {
+    try {
+      await _firestore.collection('supplies').doc(suppliesId).delete();
+    } catch (e) {
+      throw Exception('Failed to delete supply: $e');
+    }
+  }
 }

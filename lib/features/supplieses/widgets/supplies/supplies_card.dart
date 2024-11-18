@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
@@ -8,6 +9,38 @@ class SuppliesCard extends StatelessWidget {
   final Supplies supplies;
 
   const SuppliesCard({super.key, required this.supplies});
+
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Удалить Поставку'),
+          content: const Text('А вы уверены что хотите удалить поставку?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Отменить'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Удалить',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && supplies.id != null) {
+      // ignore: use_build_context_synchronously
+      context.read<SuppliesBloc>().add(
+        SuppliesDeleteEvent(suppliesId: supplies.id!),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,19 +111,25 @@ class SuppliesCard extends StatelessWidget {
                         width: 20,
                         height: 20,
                         child: PopupMenuButton(
-                          onSelected: (value) {},
+                          onSelected: (value) {
+                            if (value == 'delete') {
+                              _showDeleteConfirmation(context);
+                            }
+                          },
                           padding: EdgeInsets.zero,
                           iconSize: 20,
                           icon: const Icon(Icons.more_vert),
                           itemBuilder: (BuildContext context) {
                             return [
                               const PopupMenuItem(
+                                  value: 'delete',
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
                                   ),
                                   child: Text('Удалить')),
                               const PopupMenuItem(
+                                  value: 'edit',
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
@@ -111,3 +150,5 @@ class SuppliesCard extends StatelessWidget {
     ]);
   }
 }
+
+

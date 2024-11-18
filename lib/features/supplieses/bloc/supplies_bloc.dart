@@ -12,6 +12,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
   SuppliesBloc(this.suppliesRepository) : super(const SuppliesState()) {
     on<SuppliesGetEvent>(_onGetSupplies);
     on<SuppliesCreateNewEvent>(_onAddNewSupplies);
+    on<SuppliesDeleteEvent>(_onDeleteSupplies);
   }
 
   Future<void> _onAddNewSupplies(
@@ -41,6 +42,30 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
           suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+
+  Future<void> _onDeleteSupplies(
+      SuppliesDeleteEvent event,
+      Emitter<SuppliesState> emit,
+      ) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+
+      await suppliesRepository.deleteSupply(event.suppliesId);
+
+      // Refresh the supplies list after deletion
+      final suppliesList = await suppliesRepository.getSupplies();
+
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.success,
+        supplieses: suppliesList,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.failure,
+        // errorMessage: 'Failed to delete supply: $e',
+      ));
     }
   }
 }
