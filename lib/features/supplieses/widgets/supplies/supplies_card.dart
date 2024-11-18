@@ -16,7 +16,7 @@ class SuppliesCard extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Удалить Поставку'),
-          content: const Text('А вы уверены что хотите удалить поставку?'),
+          content: const Text('А вы уверены что хотите удалить поставку? Удаление приведет к удалению всех коробок!'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
