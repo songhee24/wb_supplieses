@@ -35,8 +35,8 @@ class FrostedAppBar extends StatelessWidget {
                   padding: const EdgeInsets.only(top: kToolbarHeight + 15),
                   dividerColor: Colors.transparent,
                   tabs: const [
-                    Tab(text: 'Поставки'),
-                    Tab(text: 'Коробки'),
+                    Tab(text: 'Созданы'),
+                    Tab(text: 'Загружены'),
                   ],
                   indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(50), // Creates border

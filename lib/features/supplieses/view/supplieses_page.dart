@@ -25,7 +25,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
       }
     });
 
-    context.read<SuppliesBloc>().add(SuppliesGetEvent());
+    context.read<SuppliesBloc>().add(SuppliesGetEvent(status: 'created'));
   }
 
   @override
@@ -84,7 +84,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
                   const Text('Что то пошло не так('),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<SuppliesBloc>().add(SuppliesGetEvent());
+                      context.read<SuppliesBloc>().add(SuppliesGetEvent(status: 'created'));
                     },
                     child: const Text('Retry'),
                   ),

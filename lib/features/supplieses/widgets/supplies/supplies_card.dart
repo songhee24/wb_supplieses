@@ -77,7 +77,7 @@ class SuppliesCard extends StatelessWidget {
                     children: [
                       Text(
                         supplies.name,
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -103,8 +103,8 @@ class SuppliesCard extends StatelessWidget {
                             const Text('Cозданно:',
                                 style: TextStyle(color: Colors.grey)),
                             Text(
-                                '${formattedDate.split(" ")[0]}'
-                                '${formattedDate.split(" ")[1]}',
+                                '${formattedDate.split(" ")[0]} '
+                                ' ${formattedDate.split(" ")[1]}',
                                 style: const TextStyle(color: Colors.grey)),
                           ]),
                       SizedBox(
@@ -123,14 +123,14 @@ class SuppliesCard extends StatelessWidget {
                             return [
                               const PopupMenuItem(
                                   value: 'delete',
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
                                   ),
                                   child: Text('Удалить')),
                               const PopupMenuItem(
                                   value: 'edit',
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
                                   ),

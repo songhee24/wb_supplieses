@@ -9,11 +9,31 @@ class SuppliesFirestoreRepository {
     supply.id = docRef.id;
   }
 
-  Future<List<Supplies>> getSupplies() async {
-    final querySnapshot = await _firestore.collection('supplies').get();
+  Future<List<Supplies>> getSupplies({String? status}) async {
+    Query query = _firestore.collection('supplies');
+
+    // Add a filter for the status if it's provided
+    if (status != null) {
+      query = query.where('status', isEqualTo: status);
+    }
+
+    final querySnapshot = await query.get();
+
     return querySnapshot.docs.map((doc) {
       return Supplies.fromMap(doc.data() as Map<String, dynamic>)..id = doc.id;
     }).toList();
+  }
+
+  Future<Supplies?> getSupplyById(String suppliesId) async {
+    final docSnapshot = await _firestore.collection('supplies').doc(suppliesId).get();
+    if (docSnapshot.exists) {
+      return Supplies.fromMap(docSnapshot.data() as Map<String, dynamic>)..id = docSnapshot.id;
+    }
+    return null;
+  }
+
+  Future<void> updateStatus(String suppliesId, String newStatus) async {
+    await _firestore.collection('supplies').doc(suppliesId).update({'status': newStatus});
   }
 
   Future<void> deleteSupply(String suppliesId) async {

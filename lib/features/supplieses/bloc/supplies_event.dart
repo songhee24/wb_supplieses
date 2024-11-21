@@ -16,6 +16,15 @@ final class SuppliesCreateNewEvent extends SuppliesEvent {
 }
 
 final class SuppliesGetEvent extends SuppliesEvent {
+  final String status;
+
+  SuppliesGetEvent({required this.status});
+
+  @override
+  List<Object> get props => [status];
+}
+
+final class SuppliesGetByIdEvent extends SuppliesEvent {
   @override
   List<Object> get props => [];
 }
