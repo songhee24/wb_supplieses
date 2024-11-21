@@ -7,7 +7,7 @@ class PathKeys {
   }
 
   static String boxes() {
-    return '${PathKeys.root}boxes';
+    return ':suppliesId/boxes';
   }
 
   static String uploadExelFile() {

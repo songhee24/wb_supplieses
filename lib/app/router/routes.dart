@@ -14,13 +14,24 @@ class Routes {
         branches: [
           StatefulShellBranch(routes: [
             GoRoute(
-                path: PathKeys.supplieses(),
-                builder: (context, state) => const SuppliesesPage())
+              path: PathKeys.supplieses(),
+              builder: (context, state) => const SuppliesesPage(),
+              routes: [
+                GoRoute(
+                  path: PathKeys.boxes(),
+                  builder: (context, state) {
+                    final suppliesId = state.pathParameters['suppliesId'];
+                    return SuppliesesInnerPage(suppliesId: suppliesId!);
+                  },
+                )
+              ],
+            ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
-                path: PathKeys.uploadExelFile(),
-                builder: (context, state) => const DatabasePage())
+              path: PathKeys.uploadExelFile(),
+              builder: (context, state) => const DatabasePage(),
+            ),
           ]),
         ])
   ];
