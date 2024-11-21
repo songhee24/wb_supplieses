@@ -8,6 +8,6 @@ class BottomDestination {
 }
 
 const destinations = [
-  BottomDestination(label: 'Коробки', icon: Icons.widgets),
+  BottomDestination(label: 'Поставки', icon: Icons.widgets),
   BottomDestination(label: 'Обновить Карточки', icon: Icons.storage),
 ];

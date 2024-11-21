@@ -1,0 +1,110 @@
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:wb_supplieses/features/supplieses/data/repositories/supplies_firestore_repository.dart';
+import 'package:wb_supplieses/features/supplieses/models/models.dart';
+
+part 'supplies_event.dart';
+part 'supplies_state.dart';
+
+class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
+  final SuppliesFirestoreRepository suppliesRepository;
+
+  SuppliesBloc(this.suppliesRepository) : super(const SuppliesState()) {
+    on<SuppliesGetEvent>(_onGetSupplies);
+    on<SuppliesCreateNewEvent>(_onAddNewSupplies);
+    on<SuppliesDeleteEvent>(_onDeleteSupplies);
+    on<SuppliesGetByIdEvent>(_onGetSupplyById);
+    on<SuppliesEditEvent>(_onEditSupply);
+  }
+
+  Future<void> _onAddNewSupplies(
+      SuppliesCreateNewEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      final newSupply = Supplies(
+          createdAt: DateTime.timestamp(),
+          name: event.name,
+          boxCount: event.boxCount);
+      await suppliesRepository.addSupply(newSupply);
+
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(
+          suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
+    } catch (e) {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+
+
+  Future<void> _onEditSupply(
+      SuppliesEditEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+
+      await suppliesRepository.editSupply(event.suppliesId, event.updatedSupply);
+
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.successEdit,
+        supplieses: suppliesList,
+      ));
+    } catch (e) {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+
+  Future<void> _onGetSupplies(
+      SuppliesGetEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(
+          suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
+    } catch (e) {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+
+  Future<void> _onDeleteSupplies(
+      SuppliesDeleteEvent event,
+      Emitter<SuppliesState> emit,
+      ) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+
+      await suppliesRepository.deleteSupply(event.suppliesId);
+
+      // Refresh the supplies list after deletion
+      final suppliesList = await suppliesRepository.getSupplies();
+
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.success,
+        supplieses: suppliesList,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.failure,
+        // errorMessage: 'Failed to delete supply: $e',
+      ));
+    }
+  }
+
+  Future<void> _onGetSupplyById(
+      SuppliesGetByIdEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      final supply = await suppliesRepository.getSupplyById(event.suppliesId);
+
+      if (supply != null) {
+        emit(state.copyWith(
+          suppliesStatus: SuppliesStatus.success,
+          selectedSupply: supply,
+        ));
+      } else {
+        emit(state.copyWith(suppliesStatus: SuppliesStatus.failure));
+      }
+    } catch (e) {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+}

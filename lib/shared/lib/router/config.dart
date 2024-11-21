@@ -6,6 +6,10 @@ class PathKeys {
     return '${PathKeys.root}supplieses';
   }
 
+  static String boxes() {
+    return '${PathKeys.root}boxes';
+  }
+
   static String uploadExelFile() {
     return '${PathKeys.root}upload-exel-file';
   }

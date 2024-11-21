@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:wb_supplieses/app/router/app_router.dart';
-import 'package:wb_supplieses/app/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
+import 'features/supplieses/data/repositories/supplies_firestore_repository.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(MyApp());
-}
+import 'package:wb_supplieses/app/app.dart';
+import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: router,
-      title: 'BAXA ZAEBES',
-      themeMode: ThemeMode.system,
-      theme: TAppTheme.lightTheme,
-      darkTheme: TAppTheme.darkTheme,
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  final suppliesRepository = SuppliesFirestoreRepository();
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (_) => SuppliesTabIndexCubit(),
+    ),
+    BlocProvider(
+      create: (_) => SuppliesBloc(suppliesRepository),
+    ),
+  ], child: const App()));
 }
