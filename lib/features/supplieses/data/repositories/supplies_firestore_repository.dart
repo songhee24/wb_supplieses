@@ -9,6 +9,17 @@ class SuppliesFirestoreRepository {
     supply.id = docRef.id;
   }
 
+  Future<void> editSupply(String suppliesId, Supplies updatedSupply) async {
+    try {
+      await _firestore
+          .collection('supplies')
+          .doc(suppliesId)
+          .update(updatedSupply.toMap());
+    } catch (e) {
+      throw Exception('Failed to edit supply: $e');
+    }
+  }
+
   Future<List<Supplies>> getSupplies({String? status}) async {
     Query query = _firestore.collection('supplies');
 

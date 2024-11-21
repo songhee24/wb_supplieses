@@ -10,13 +10,31 @@ class SuppliesCard extends StatelessWidget {
 
   const SuppliesCard({super.key, required this.supplies});
 
+  Future<void> _onGetSuppliesById(BuildContext context) async {
+    if (supplies.id != null) {
+      BlocProvider.of<SuppliesBloc>(context).add(
+        SuppliesGetByIdEvent(suppliesId: supplies.id!),
+      );
+      showModalBottomSheet(
+        useRootNavigator: true,
+          isScrollControlled: true,
+          context: context,
+          builder: (BuildContext context) {
+            return SuppliesFormBottomSheet(
+              suppliesId: supplies.id,
+            );
+          });
+    }
+  }
+
   Future<void> _showDeleteConfirmation(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Удалить Поставку'),
-          content: const Text('А вы уверены что хотите удалить поставку? Удаление приведет к удалению всех коробок!'),
+          content: const Text(
+              'А вы уверены что хотите удалить поставку? Удаление приведет к удалению всех коробок!'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -37,8 +55,8 @@ class SuppliesCard extends StatelessWidget {
     if (confirmed == true && supplies.id != null) {
       // ignore: use_build_context_synchronously
       context.read<SuppliesBloc>().add(
-        SuppliesDeleteEvent(suppliesId: supplies.id!),
-      );
+            SuppliesDeleteEvent(suppliesId: supplies.id!),
+          );
     }
   }
 
@@ -115,6 +133,9 @@ class SuppliesCard extends StatelessWidget {
                             if (value == 'delete') {
                               _showDeleteConfirmation(context);
                             }
+                            if (value == 'edit') {
+                              _onGetSuppliesById(context);
+                            }
                           },
                           padding: EdgeInsets.zero,
                           iconSize: 20,
@@ -150,5 +171,3 @@ class SuppliesCard extends StatelessWidget {
     ]);
   }
 }
-
-

@@ -15,6 +15,16 @@ final class SuppliesCreateNewEvent extends SuppliesEvent {
   List<Object> get props => [name, boxCount];
 }
 
+class SuppliesEditEvent extends SuppliesEvent {
+  final String suppliesId;
+  final Supplies updatedSupply;
+
+  SuppliesEditEvent({required this.suppliesId, required this.updatedSupply});
+
+  @override
+  List<Object> get props => [suppliesId, updatedSupply];
+}
+
 final class SuppliesGetEvent extends SuppliesEvent {
   final String status;
 
@@ -25,8 +35,11 @@ final class SuppliesGetEvent extends SuppliesEvent {
 }
 
 final class SuppliesGetByIdEvent extends SuppliesEvent {
+  final String suppliesId;
+
+  SuppliesGetByIdEvent({required this.suppliesId});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [suppliesId];
 }
 
 final class SuppliesDeleteEvent extends SuppliesEvent {

@@ -7,7 +7,9 @@ import 'package:wb_supplieses/app/layout/layout_scaffold.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 class SuppliesFormBottomSheet extends StatefulWidget {
-  const SuppliesFormBottomSheet({super.key});
+  final String? suppliesId;
+
+  const SuppliesFormBottomSheet({super.key, this.suppliesId});
 
   @override
   State<SuppliesFormBottomSheet> createState() =>
@@ -20,6 +22,16 @@ class _SuppliesFormBottomSheetState extends State<SuppliesFormBottomSheet> {
   final _countController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.suppliesId != null) {
+      context
+          .read<SuppliesBloc>()
+          .add(SuppliesGetByIdEvent(suppliesId: widget.suppliesId!));
+    }
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _countController.dispose();
@@ -28,19 +40,32 @@ class _SuppliesFormBottomSheetState extends State<SuppliesFormBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    bool isEdit = widget.suppliesId != null;
     return BlocListener<SuppliesBloc, SuppliesState>(
       listener: (context, state) {
-        if (state.suppliesStatus == SuppliesStatus.success) {
+        if (state.suppliesStatus == SuppliesStatus.success &&
+            state.selectedSupply != null &&
+            isEdit) {
+          _nameController.text = state.selectedSupply!.name;
+          _countController.text =
+              state.selectedSupply!.boxCount?.toString() ?? '';
+        } else if (state.suppliesStatus == SuppliesStatus.failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Не получилось загрузить поставку!')),
+          );
+        } else if (state.suppliesStatus == SuppliesStatus.successEdit || state.suppliesStatus == SuppliesStatus.success) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Новая поставка успешно создана!'),
+              content: Text('Успех!'),
             ),
           );
         }
       },
       child: Padding(
-        padding: MediaQuery.of(context).viewInsets,
+        padding: MediaQuery
+            .of(context)
+            .viewInsets,
         child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           child: BackdropFilter(
@@ -97,41 +122,63 @@ class _SuppliesFormBottomSheetState extends State<SuppliesFormBottomSheet> {
                     const SizedBox(height: 8),
                     BlocBuilder<SuppliesBloc, SuppliesState>(
                         builder: (context, state) {
-                      final isLoading =
-                          state.suppliesStatus == SuppliesStatus.loading;
+                          final isLoading =
+                              state.suppliesStatus == SuppliesStatus.loading;
 
-                      return Flexible(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity,
-                                40), // fromHeight use double.infinity as width and 40 is the height
-                          ),
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  if (_formKey.currentState!.validate()) {
-                                    final suppliesName = _nameController.text;
-                                    final boxCount = _countController.text == ''
-                                        ? 0
-                                        : int.parse(_countController.text);
-                                    // Call SuppliesAddNew event with the entered values
-                                    BlocProvider.of<SuppliesBloc>(context).add(
+                          return Flexible(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(double.infinity,
+                                    40), // fromHeight use double.infinity as width and 40 is the height
+                              ),
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                if (_formKey.currentState!.validate()) {
+                                  final suppliesName = _nameController.text;
+                                  final boxCount = _countController.text == ''
+                                      ? 0
+                                      : int.parse(_countController.text);
+                                  // Call SuppliesAddNew event with the entered values
+                                  if (isEdit) {
+                                    BlocProvider.of<SuppliesBloc>(context)
+                                        .add(
+                                      SuppliesEditEvent(
+                                          suppliesId: widget.suppliesId!,
+                                          updatedSupply: Supplies(
+                                            name: suppliesName,
+                                            boxCount: boxCount,
+                                            createdAt: DateTime.timestamp(),
+                                          )),
+                                    );
+                                  } else {
+                                    BlocProvider.of<SuppliesBloc>(context)
+                                        .add(
                                       SuppliesCreateNewEvent(
                                         name: suppliesName,
                                         boxCount: boxCount,
                                       ),
                                     );
-                                  } else {}
-                                },
-                          child: isLoading
-                              ? const CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                )
-                              : const Text('Создать Поставку'),
-                        ),
-                      );
-                    }),
+                                  }
+                                  BlocListener<SuppliesBloc, SuppliesState>(
+                                      listener: (context, state)
+                                      {
+                                        bool isSuccess = state.suppliesStatus ==
+                                            SuppliesStatus.success;
+                                      });
+                                }
+                              },
+                              child: isLoading
+                                  ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white),
+                              )
+                                  : isEdit
+                                  ? const Text('Изменить Поставку')
+                                  : const Text('Создать Поставку'),
+                            ),
+                          );
+                        }),
                   ],
                 ),
               ),

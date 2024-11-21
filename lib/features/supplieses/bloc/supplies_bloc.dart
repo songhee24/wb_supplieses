@@ -13,6 +13,8 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
     on<SuppliesGetEvent>(_onGetSupplies);
     on<SuppliesCreateNewEvent>(_onAddNewSupplies);
     on<SuppliesDeleteEvent>(_onDeleteSupplies);
+    on<SuppliesGetByIdEvent>(_onGetSupplyById);
+    on<SuppliesEditEvent>(_onEditSupply);
   }
 
   Future<void> _onAddNewSupplies(
@@ -30,6 +32,24 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
           suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+
+
+  Future<void> _onEditSupply(
+      SuppliesEditEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+
+      await suppliesRepository.editSupply(event.suppliesId, event.updatedSupply);
+
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.successEdit,
+        supplieses: suppliesList,
+      ));
+    } catch (e) {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.failure));
     }
   }
 
@@ -66,6 +86,25 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
         suppliesStatus: SuppliesStatus.failure,
         // errorMessage: 'Failed to delete supply: $e',
       ));
+    }
+  }
+
+  Future<void> _onGetSupplyById(
+      SuppliesGetByIdEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      final supply = await suppliesRepository.getSupplyById(event.suppliesId);
+
+      if (supply != null) {
+        emit(state.copyWith(
+          suppliesStatus: SuppliesStatus.success,
+          selectedSupply: supply,
+        ));
+      } else {
+        emit(state.copyWith(suppliesStatus: SuppliesStatus.failure));
+      }
+    } catch (e) {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.failure));
     }
   }
 }
