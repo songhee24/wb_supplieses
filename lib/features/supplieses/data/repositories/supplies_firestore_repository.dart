@@ -9,6 +9,20 @@ class SuppliesFirestoreRepository {
     supply.id = docRef.id;
   }
 
+  Future<void> addBox() async {
+    // try {
+    //   final box = Box(
+    //     suppliesId: suppliesId,
+    //     productCount: productCount,
+    //     createdAt: DateTime.now(),
+    //   );
+    //
+    //   await _firestore.collection('boxes').add(box.toMap());
+    // } catch (e) {
+    //   throw Exception('Failed to add box: $e');
+    // }
+  }
+
   Future<void> editSupply(String suppliesId, Supplies updatedSupply) async {
     try {
       await _firestore

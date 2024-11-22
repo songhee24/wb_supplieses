@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
@@ -43,6 +44,15 @@ class _SuppliesesPageState extends State<SuppliesesPage>
           FrostedAppBar(
             tabController: _tabController,
           ),
+          CupertinoSliverRefreshControl(
+            onRefresh: () {
+              // this required Future<void> Function
+              context
+                  .read<SuppliesBloc>()
+                  .add(SuppliesGetEvent(status: 'created'));
+              return Future.value(true);
+            },
+          ),
           SliverPadding(
             padding: const EdgeInsets.only(
                 bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
@@ -52,10 +62,10 @@ class _SuppliesesPageState extends State<SuppliesesPage>
                 return _tabController.index == 0
                     ? _buildSupplyTabContent()
                     : const SliverToBoxAdapter(
-                  child: Center(
-                    child: Text('box'),
-                  ),
-                );
+                        child: Center(
+                          child: Text('box'),
+                        ),
+                      );
               },
             ),
           )
@@ -69,8 +79,13 @@ class _SuppliesesPageState extends State<SuppliesesPage>
       builder: (context, state) {
         if (state.suppliesStatus == SuppliesStatus.loading) {
           return const SliverToBoxAdapter(
-            child: Center(
-              child: CircularProgressIndicator(),
+            child: Padding(
+              padding: EdgeInsets.only(top: 55),
+              child: Center(
+                child: CupertinoActivityIndicator(
+                  radius: 13,
+                ),
+              ),
             ),
           );
         }
@@ -84,7 +99,9 @@ class _SuppliesesPageState extends State<SuppliesesPage>
                   const Text('Что то пошло не так('),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<SuppliesBloc>().add(SuppliesGetEvent(status: 'created'));
+                      context
+                          .read<SuppliesBloc>()
+                          .add(SuppliesGetEvent(status: 'created'));
                     },
                     child: const Text('Retry'),
                   ),
@@ -104,12 +121,13 @@ class _SuppliesesPageState extends State<SuppliesesPage>
 
         return SliverList(
           delegate: SliverChildBuilderDelegate(
-                (context, index) {
+            (context, index) {
               final supply = state.supplieses[index];
               return Column(
                 children: [
                   SuppliesCard(
-                    supplies: supply, // Assuming SuppliesCard accepts a supply parameter
+                    supplies:
+                        supply, // Assuming SuppliesCard accepts a supply parameter
                   ),
                   if (index < state.supplieses.length - 1)
                     const SizedBox(height: 8),
