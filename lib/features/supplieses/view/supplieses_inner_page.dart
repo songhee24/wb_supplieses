@@ -14,35 +14,36 @@ class SuppliesesInnerPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            toolbarHeight: kToolbarHeight * 1.5,
+            backgroundColor: Colors.transparent,
             pinned: true,
-            expandedHeight: 0,
             // automaticallyImplyLeading: false,
             snap: false,
-            title: Text('Коробки'),
+            title: const Text('Коробки'),
             centerTitle: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.11),
-                ),
-              ),
-              title: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text('0'),
-                        const SizedBox(width: 4),
-                        Image.asset(
-                          'lib/assets/box.png',
-                          width: 28,
-                          height: 28,
-                        )
-                      ],
+            flexibleSpace: Container(
+              color: Colors.grey.withOpacity(0.11),
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: SizedBox(
+                    height: kToolbarHeight * 2.5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 25),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text('0'),
+                          const SizedBox(width: 4),
+                          Image.asset(
+                            'lib/assets/box.png',
+                            width: 28,
+                            height: 28,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
