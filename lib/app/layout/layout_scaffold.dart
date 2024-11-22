@@ -16,10 +16,7 @@ class LayoutScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(navigationShell.route.routes.first);
     final suppliesId = state.pathParameters['suppliesId'];
-    print(suppliesId);
-
     LinearGradient gradient = const LinearGradient(
         colors: [Color(0xff33265a), Color(0xff1c1925), Color(0xff382375)],
         begin: Alignment.topRight,

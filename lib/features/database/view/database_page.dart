@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DatabasePage extends StatefulWidget {
@@ -55,7 +56,7 @@ class _DatabasePageState extends State<DatabasePage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text('Failed to read Excel file: $e'),
           actions: [
             TextButton(
@@ -97,7 +98,7 @@ class _DatabasePageState extends State<DatabasePage> {
   Future<List<List<dynamic>>> readExcelFile(PlatformFile file) async {
     List<List<dynamic>> data = [];
     const int MAX_COLUMNS = 10;
-    const int START_ROW = 3;
+    const int START_ROW = 2;
 
     try {
       late List<int> bytes;
@@ -144,26 +145,33 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   Widget _buildDataTable() {
-    if (_filteredData.isEmpty) return Center(child: Text('No data found'));
+    List<List<dynamic>> displayData = _searchController.text.isEmpty
+        ? _excelData
+        : _filteredData;
 
-    int startIndex = _currentPage * _rowsPerPage;
+    if (displayData.isEmpty) return const Center(child: Text('No data found'));
+
+    // Calculate pagination
+    int startIndex = _currentPage * _rowsPerPage + 1;
     int endIndex = startIndex + _rowsPerPage;
-    if (endIndex > _filteredData.length) endIndex = _filteredData.length;
+    if (endIndex > displayData.length) endIndex = displayData.length;
 
-    List<List<dynamic>> pageData = _filteredData.sublist(startIndex, endIndex);
+    // Get current page data
+    List<List<dynamic>> pageData = displayData.sublist(startIndex, endIndex);
+
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight + 60),
+        padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
         child: DataTable(
           showCheckboxColumn: false,
           columns: List<DataColumn>.generate(
-            _filteredData[0].length,
+            displayData[0].length,
                 (index) => DataColumn(
               label: Text(
-                'Column ${index + 1}',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                '${displayData[0][index]}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -171,7 +179,7 @@ class _DatabasePageState extends State<DatabasePage> {
             return DataRow(
               cells: rowData.map((cellData) {
                 return DataCell(
-                  Text(cellData?.toString() ?? ''),
+                  SingleChildScrollView(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 200), child: Text(cellData?.toString() ?? ''))),
                 );
               }).toList(),
             );
@@ -180,6 +188,7 @@ class _DatabasePageState extends State<DatabasePage> {
       ),
     );
   }
+
 
   Widget _buildPagination() {
     if (_excelData.isEmpty) return SizedBox.shrink();
@@ -305,7 +314,7 @@ class _DatabasePageState extends State<DatabasePage> {
           _buildPagination(),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CupertinoActivityIndicator())
                 : _buildDataTable(),
           ),
         ],
