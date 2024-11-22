@@ -18,6 +18,8 @@ class SuppliesesInnerPage extends StatelessWidget {
             expandedHeight: 0,
             // automaticallyImplyLeading: false,
             snap: false,
+            title: Text('Коробки'),
+            centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(
@@ -25,14 +27,21 @@ class SuppliesesInnerPage extends StatelessWidget {
                 ),
               ),
               title: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text('Коробки'),
+                        const Text('0'),
+                        const SizedBox(width: 4),
+                        Image.asset(
+                          'lib/assets/box.png',
+                          width: 28,
+                          height: 28,
+                        )
                       ],
                     ),
                   ),
