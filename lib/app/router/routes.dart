@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:wb_supplieses/app/layout/layout_scaffold.dart';
-import 'package:wb_supplieses/features/database/view/database_page.dart';
+import 'package:wb_supplieses/features/database/database.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/lib/router/config.dart';
 
