@@ -4,6 +4,8 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wb_supplieses/features/database/database.dart';
 
 class DatabasePage extends StatefulWidget {
   const DatabasePage({super.key});
@@ -15,7 +17,7 @@ class DatabasePage extends StatefulWidget {
 class _DatabasePageState extends State<DatabasePage> {
   List<List<dynamic>> _excelData = [];
   List<List<dynamic>> _filteredData = [];
-  bool _isLoading = false;
+  bool _isPlatformFilePickupLoading = false;
   int _currentPage = 0;
   int _rowsPerPage = 10;
 
@@ -31,9 +33,9 @@ class _DatabasePageState extends State<DatabasePage> {
     super.dispose();
   }
 
-  Future<void> pickAndReadExcelFile() async {
+  Future<void> pickAndReadExcelFile(BuildContext context) async {
     setState(() {
-      _isLoading = true;
+      _isPlatformFilePickupLoading = true;
     });
 
     try {
@@ -46,29 +48,34 @@ class _DatabasePageState extends State<DatabasePage> {
       if (result != null) {
         // Read file
         List<List<dynamic>> data = await readExcelFile(result.files.first);
+        print('data ${data}');
+        if (context.mounted) {
+          context.read<ProductBloc>().add(LoadExcelDataEvent(data));
+        }
 
         setState(() {
           _excelData = data;
         });
       }
     } catch (e) {
-      // Show error dialog
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text('Failed to read Excel file: $e'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to read Excel file: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     } finally {
       setState(() {
-        _isLoading = false;
+        _isPlatformFilePickupLoading = false;
       });
     }
   }
@@ -78,7 +85,8 @@ class _DatabasePageState extends State<DatabasePage> {
       if (query.isEmpty) {
         _filteredData = _excelData;
       } else {
-        _filteredData = _excelData.where((row) => matchesQuery(row, query)).toList();
+        _filteredData =
+            _excelData.where((row) => matchesQuery(row, query)).toList();
         print('_filteredData $_filteredData');
       }
       _currentPage = 0; // Reset to the first page after filtering
@@ -86,10 +94,14 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   bool matchesQuery(List<dynamic> row, String query) {
-    if (row.length > 1 && row[1]?.toString().toLowerCase().contains(query.toLowerCase()) == true) {
+    if (row.length > 1 &&
+        row[1]?.toString().toLowerCase().contains(query.toLowerCase()) ==
+            true) {
       return true;
     }
-    if (row.length > 3 && row[3]?.toString().toLowerCase().contains(query.toLowerCase()) == true) {
+    if (row.length > 3 &&
+        row[3]?.toString().toLowerCase().contains(query.toLowerCase()) ==
+            true) {
       return true;
     }
     return false;
@@ -145,50 +157,33 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   Widget _buildDataTable() {
-    List<List<dynamic>> displayData = _searchController.text.isEmpty
-        ? _excelData
-        : _filteredData;
-
-    if (displayData.isEmpty) return const Center(child: Text('No data found'));
-
-    // Calculate pagination
-    int startIndex = _currentPage * _rowsPerPage + 1;
-    int endIndex = startIndex + _rowsPerPage;
-    if (endIndex > displayData.length) endIndex = displayData.length;
-
-    // Get current page data
-    List<List<dynamic>> pageData = displayData.sublist(startIndex, endIndex);
-
+    // List<List<dynamic>> displayData = _searchController.text.isEmpty
+    //     ? _excelData
+    //     : _filteredData;
+    //
+    // if (displayData.isEmpty) return const Center(child: Text('No data found'));
+    //
+    // // Calculate pagination
+    // int startIndex = _currentPage * _rowsPerPage + 1;
+    // int endIndex = startIndex + _rowsPerPage;
+    // if (endIndex > displayData.length) endIndex = displayData.length;
+    //
+    // // Get current page data
+    // List<List<dynamic>> pageData = displayData.sublist(startIndex, endIndex);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: List<DataColumn>.generate(
-            displayData[0].length,
-                (index) => DataColumn(
-              label: Text(
-                '${displayData[0][index]}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          rows: pageData.map((rowData) {
-            return DataRow(
-              cells: rowData.map((cellData) {
-                return DataCell(
-                  SingleChildScrollView(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 200), child: Text(cellData?.toString() ?? ''))),
-                );
-              }).toList(),
-            );
-          }).toList(),
-        ),
-      ),
+      child: BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
+        if(state is ProductLoadedState) {
+          print('state ${state.products}');
+        }
+        return const SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
+          child: Text('data'),
+        );
+      }),
     );
   }
-
 
   Widget _buildPagination() {
     if (_excelData.isEmpty) return SizedBox.shrink();
@@ -288,32 +283,36 @@ class _DatabasePageState extends State<DatabasePage> {
             child: Row(
               children: [
                 ElevatedButton(
-                  onPressed: _isLoading ? null : pickAndReadExcelFile,
-                  child: Text(_isLoading ? 'Loading...' : 'Pick Excel File'),
+                  onPressed: _isPlatformFilePickupLoading
+                      ? null
+                      : () => pickAndReadExcelFile(context),
+                  child: Text(_isPlatformFilePickupLoading
+                      ? 'Loading...'
+                      : 'Pick Excel File'),
                 ),
                 const SizedBox(width: 10),
-                if(_excelData.isNotEmpty)
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: _filterData,
-                      decoration:  const InputDecoration(
-                        labelText: 'Search',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.zero,
-                        prefixIcon: Icon(Icons.search),
+                if (_excelData.isNotEmpty)
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: _filterData,
+                        decoration: const InputDecoration(
+                          labelText: 'Search',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.zero,
+                          prefixIcon: Icon(Icons.search),
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
           _buildPagination(),
           Expanded(
-            child: _isLoading
+            child: _isPlatformFilePickupLoading
                 ? const Center(child: CupertinoActivityIndicator())
                 : _buildDataTable(),
           ),
@@ -389,3 +388,25 @@ class _DatabasePageState extends State<DatabasePage> {
 //     ],
 //   );
 // }
+
+// DataTable(
+// showCheckboxColumn: false,
+// columns: List<DataColumn>.generate(
+// displayData[0].length,
+// (index) => DataColumn(
+// label: Text(
+// '${displayData[0][index]}',
+// style: const TextStyle(fontWeight: FontWeight.bold),
+// ),
+// ),
+// ),
+// rows: pageData.map((rowData) {
+// return DataRow(
+// cells: rowData.map((cellData) {
+// return DataCell(
+// SingleChildScrollView(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 200), child: Text(cellData?.toString() ?? ''))),
+// );
+// }).toList(),
+// );
+// }).toList(),
+// )

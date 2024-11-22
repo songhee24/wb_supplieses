@@ -32,8 +32,8 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<void> loadExcelData(List<ProductModel> excelData) async {
     try {
-      // Skip header row, start from index 1
-      List<ProductModel> products = excelData.sublist(1).map((row) {
+      // Skip header row, start from index 1 if you need
+      List<ProductModel> products = excelData.sublist(0).map((row) {
         return ProductModel.fromExcelRow(excelData);
       }).toList();
 

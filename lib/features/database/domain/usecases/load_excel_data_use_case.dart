@@ -13,7 +13,9 @@ class LoadExcelDataUseCase {
       throw Exception('No valid data in Excel file');
     }
 
-    List<ProductModel> products = excelData.sublist(1).map((row) {
+    List<ProductModel> products = excelData.sublist(0).map((row) {
+      print('row $row');
+      // TODO need to update or check
       return ProductModel.fromExcelRow(row);
     }).toList();
 
