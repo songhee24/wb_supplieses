@@ -10,7 +10,7 @@ class Routes {
   static final List<StatefulShellRoute> routes = [
     StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
-            LayoutScaffold(navigationShell: navigationShell),
+            LayoutScaffold(state: state, navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(routes: [
             GoRoute(

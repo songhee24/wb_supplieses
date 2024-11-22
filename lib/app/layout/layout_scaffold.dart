@@ -8,12 +8,18 @@ import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.
 import 'package:wb_supplieses/features/supplieses/widgets/supplies/supplies_form_bottom_sheet.dart';
 
 class LayoutScaffold extends StatelessWidget {
-  const LayoutScaffold({required this.navigationShell, super.key});
+  const LayoutScaffold(
+      {required this.navigationShell, super.key, required this.state});
 
   final StatefulNavigationShell navigationShell;
+  final GoRouterState state;
 
   @override
   Widget build(BuildContext context) {
+    print(navigationShell.route.routes.first);
+    final suppliesId = state.pathParameters['suppliesId'];
+    print(suppliesId);
+
     LinearGradient gradient = const LinearGradient(
         colors: [Color(0xff33265a), Color(0xff1c1925), Color(0xff382375)],
         begin: Alignment.topRight,
@@ -25,24 +31,27 @@ class LayoutScaffold extends StatelessWidget {
       backgroundColor: Colors.transparent,
       // Add FloatingActionButton
       floatingActionButton: navigationShell.currentIndex == 0
+      // TODO refactor BlocBuilder use navigationShell or GoRouterState
           ? BlocBuilder<SuppliesTabIndexCubit, int>(
-        builder: (context, selectedTabIndex) {
-          return FloatingActionButton(
-            onPressed: () {
-              if (selectedTabIndex == 0) {
-                showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context, builder: (BuildContext context)  {
-                  return const SuppliesFormBottomSheet();
-                });
-              } else if (selectedTabIndex == 1) {
-                // Action for the second tab
-              }
-            },
-            child: const Icon(Icons.add),
-          );
-        },
-      )
+              builder: (context, selectedTabIndex) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    if (suppliesId != null) {
+                    } else if (selectedTabIndex == 0) {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const SuppliesFormBottomSheet();
+                          });
+                    } else if (selectedTabIndex == 1) {
+                      // Action for the second tab
+                    }
+                  },
+                  child: const Icon(Icons.add),
+                );
+              },
+            )
           : null,
       // Set the FAB location
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

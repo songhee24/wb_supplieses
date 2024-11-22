@@ -74,7 +74,8 @@ class SuppliesCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
           onTap: () {
-                context.go('${PathKeys.supplieses()}/${supplies.id}/boxes');
+            // context.read<SuppliesTabIndexCubit>().setTabIndex(-1);
+            context.push('${PathKeys.supplieses()}/${supplies.id}/boxes');
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
