@@ -29,6 +29,7 @@ class _DatabasePageState extends State<DatabasePage> {
     _searchController.dispose();
     super.dispose();
   }
+
   Future<void> pickAndReadExcelFile() async {
     setState(() {
       _isLoading = true;
@@ -59,7 +60,7 @@ class _DatabasePageState extends State<DatabasePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -76,22 +77,27 @@ class _DatabasePageState extends State<DatabasePage> {
       if (query.isEmpty) {
         _filteredData = _excelData;
       } else {
-        _filteredData = _excelData
-            .where((row) => row.any(
-              (cell) =>
-          cell?.toString().toLowerCase().contains(query.toLowerCase()) ?? false,
-        ))
-            .toList();
+        _filteredData = _excelData.where((row) => matchesQuery(row, query)).toList();
+        print('_filteredData $_filteredData');
       }
       _currentPage = 0; // Reset to the first page after filtering
     });
   }
 
+  bool matchesQuery(List<dynamic> row, String query) {
+    if (row.length > 1 && row[1]?.toString().toLowerCase().contains(query.toLowerCase()) == true) {
+      return true;
+    }
+    if (row.length > 3 && row[3]?.toString().toLowerCase().contains(query.toLowerCase()) == true) {
+      return true;
+    }
+    return false;
+  }
 
   Future<List<List<dynamic>>> readExcelFile(PlatformFile file) async {
     List<List<dynamic>> data = [];
-    final int MAX_COLUMNS = 10;
-    final int START_ROW = 3;
+    const int MAX_COLUMNS = 10;
+    const int START_ROW = 3;
 
     try {
       late List<int> bytes;
@@ -105,7 +111,8 @@ class _DatabasePageState extends State<DatabasePage> {
       var excel = Excel.decodeBytes(bytes);
       var sheet = excel.tables[excel.tables.keys.first];
 
-      int columnCount = sheet!.maxColumns > MAX_COLUMNS ? MAX_COLUMNS : sheet.maxColumns;
+      int columnCount =
+          sheet!.maxColumns > MAX_COLUMNS ? MAX_COLUMNS : sheet.maxColumns;
 
       for (var row = START_ROW; row < sheet.maxRows; row++) {
         List<dynamic> rowData = [];
@@ -136,17 +143,14 @@ class _DatabasePageState extends State<DatabasePage> {
     return data;
   }
 
-
   Widget _buildDataTable() {
-    if (_excelData.isEmpty) return Center(child: Text('No data loaded'));
+    if (_filteredData.isEmpty) return Center(child: Text('No data found'));
 
-    // Calculate pagination
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
-    if (endIndex > _excelData.length) endIndex = _excelData.length;
+    if (endIndex > _filteredData.length) endIndex = _filteredData.length;
 
-    // Get current page data
-    List<List<dynamic>> pageData = _excelData.sublist(startIndex, endIndex);
+    List<List<dynamic>> pageData = _filteredData.sublist(startIndex, endIndex);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -155,7 +159,7 @@ class _DatabasePageState extends State<DatabasePage> {
         child: DataTable(
           showCheckboxColumn: false,
           columns: List<DataColumn>.generate(
-            _excelData[0].length,
+            _filteredData[0].length,
                 (index) => DataColumn(
               label: Text(
                 'Column ${index + 1}',
@@ -186,30 +190,30 @@ class _DatabasePageState extends State<DatabasePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_left),
           onPressed: _currentPage > 0
               ? () {
-            setState(() {
-              _currentPage--;
-            });
-          }
+                  setState(() {
+                    _currentPage--;
+                  });
+                }
               : null,
         ),
         Text(
           'Page ${_currentPage + 1} of $totalPages',
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
         IconButton(
-          icon: Icon(Icons.chevron_right),
+          icon: const Icon(Icons.chevron_right),
           onPressed: _currentPage < totalPages - 1
               ? () {
-            setState(() {
-              _currentPage++;
-            });
-          }
+                  setState(() {
+                    _currentPage++;
+                  });
+                }
               : null,
         ),
-        SizedBox(width: 20),
+        const SizedBox(width: 20),
         DropdownButton<int>(
           value: _rowsPerPage,
           items: [10, 20, 50, 100].map((int value) {
@@ -235,30 +239,30 @@ class _DatabasePageState extends State<DatabasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Excel Reader'),
+        title: const Text('Excel Reader'),
         actions: [
           IconButton(
-            icon: Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline),
             onPressed: () {
               if (_excelData.isNotEmpty) {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text('Data Statistics'),
+                    title: const Text('Data Statistics'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Total Rows: ${_excelData.length}'),
                         Text('Total Columns: ${_excelData[0].length}'),
-                        Text('Starting Row: 3'),
+                        const Text('Starting Row: 3'),
                         Text('Rows per page: $_rowsPerPage'),
                       ],
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       ),
                     ],
                   ),
@@ -271,16 +275,37 @@ class _DatabasePageState extends State<DatabasePage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : pickAndReadExcelFile,
-              child: Text(_isLoading ? 'Loading...' : 'Pick Excel File'),
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _isLoading ? null : pickAndReadExcelFile,
+                  child: Text(_isLoading ? 'Loading...' : 'Pick Excel File'),
+                ),
+                const SizedBox(width: 10),
+                if(_excelData.isNotEmpty)
+                Expanded(
+                  child: SizedBox(
+                    height: 40,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: _filterData,
+                      decoration:  const InputDecoration(
+                        labelText: 'Search',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.zero,
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           _buildPagination(),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _buildDataTable(),
           ),
         ],
@@ -288,8 +313,6 @@ class _DatabasePageState extends State<DatabasePage> {
     );
   }
 }
-
-
 
 // Widget _buildVirtualizedTable() {
 //   if (_excelData.isEmpty) return Center(child: Text('No data loaded'));
