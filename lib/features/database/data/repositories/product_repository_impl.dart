@@ -12,6 +12,7 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<List<ProductEntity>> getAllProducts() async {
     try {
       final products = await localDatasource.getAllProducts();
+      print('products $products');
       return products
           .map<ProductEntity>((p) => ProductEntity(
               groupId: p.groupId,
@@ -32,10 +33,14 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<void> loadExcelData(List<List<dynamic>> excelData) async {
     try {
+
+      // print('excelData $excelData');
       // Skip header row, start from index 1 if you need
       List<ProductModel> products = excelData.sublist(0).map((row) {
+        // print("row $row");
         return ProductModel.fromExcelRow(row);
       }).toList();
+
 
       // Clear existing data and insert new products
       await localDatasource.deleteAllProducts();

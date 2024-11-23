@@ -32,8 +32,8 @@ class ProductModel extends ProductEntity {
 
   factory ProductModel.fromExcelRow(List<dynamic> row) {
     return ProductModel(
-      // groupId: row[0] is int ? row[0] : null,
-      groupId: row[0],
+      groupId: row[0] == null ? '' : row[0].toString(),
+      // groupId: row[0],
       sellersArticle: row[1]?.toString() ?? '',
       articleWB: row[2]?.toString() ?? '',
       productName: row[3]?.toString() ?? '',
@@ -47,7 +47,7 @@ class ProductModel extends ProductEntity {
 
   Map<String, dynamic> toMap() {
     return {
-      'group_id': groupId,
+      'group_id': groupId == null ? '' : groupId.toString(),
       'sellers_article': sellersArticle,
       'article_wb': articleWB,
       'product_name': productName,
@@ -62,7 +62,7 @@ class ProductModel extends ProductEntity {
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
       id: map['id'],
-      groupId: map['group_id'],
+      groupId: map['group_id'].toString(),
       sellersArticle: map['sellers_article'],
       articleWB: map['article_wb'],
       productName: map['product_name'],

@@ -27,12 +27,17 @@ class _DatabasePageState extends State<DatabasePage> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ProductBloc>().add(FetchProductsEvent());
+  }
+
+  @override
   void dispose() {
     _horizontalController.dispose();
     _verticalController.dispose();
     _searchController.dispose();
 
-    context.read<ProductBloc>().add(FetchProductsEvent());
     super.dispose();
   }
 
@@ -159,20 +164,62 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   Widget _buildDataTable() {
+    // Determine the data to display
     List<ProductModel> displayData =
         _searchController.text.isEmpty ? _excelData : _filteredData;
 
-    if (displayData.isEmpty) return const Center(child: Text('No data found'));
+    if (displayData.isEmpty) {
+      return const Center(child: Text('Загружите вашу базу данных'));
+    }
 
     // Calculate pagination
-    int startIndex = _currentPage * _rowsPerPage + 1;
+    int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
-    if (endIndex > displayData.length) endIndex = displayData.length;
+    endIndex = endIndex > displayData.length ? displayData.length : endIndex;
 
-    // Get current page data
+    // Extract current page data
     List<ProductModel> pageData = displayData.sublist(startIndex, endIndex);
 
-    final ProductModel column = displayData[0];
+    if (pageData.isNotEmpty) {
+      pageData = pageData.sublist(1); // Skip the first index
+    }
+
+    // Helper method for generating DataColumns
+    DataColumn _buildColumn(String label) {
+      return DataColumn(
+        label: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
+    // Define table columns based on ProductModel attributes
+    final firstProduct = displayData.first;
+    final columnLabels = [
+      '${firstProduct.groupId}',
+      firstProduct.sellersArticle,
+      firstProduct.articleWB,
+      firstProduct.productName,
+      firstProduct.category,
+      firstProduct.brand,
+      firstProduct.barcode,
+      firstProduct.size,
+      firstProduct.russianSize,
+    ];
+
+    // Convert product attributes to a list for easier mapping
+    List<String Function(ProductModel)> productAttributes = [
+      (p) => p.groupId.toString(),
+      (p) => p.sellersArticle,
+      (p) => p.articleWB,
+      (p) => p.productName,
+      (p) => p.category,
+      (p) => p.brand,
+      (p) => p.barcode,
+      (p) => p.size,
+      (p) => p.russianSize,
+    ];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -180,65 +227,13 @@ class _DatabasePageState extends State<DatabasePage> {
         padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
         child: DataTable(
           showCheckboxColumn: false,
-          columns: [
-            DataColumn(
-                label: Text(
-              '${column.id}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.sellersArticle,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.articleWB,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.productName,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.category,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.brand,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.barcode,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.size,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-            DataColumn(
-                label: Text(
-              column.russianSize,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            )),
-          ],
+          columns: columnLabels.map(_buildColumn).toList(),
           rows: pageData.map((product) {
-            return DataRow(cells: [
-              DataCell(Text('${product.groupId}')),
-              DataCell(Text(product.sellersArticle)),
-              DataCell(Text(product.articleWB)),
-              DataCell(Text(product.productName)),
-              DataCell(Text(product.category)),
-              DataCell(Text(product.brand)),
-              DataCell(Text(product.barcode)),
-              DataCell(Text(product.size)),
-              DataCell(Text(product.russianSize)),
-            ]);
+            return DataRow(
+              cells: productAttributes
+                  .map((attr) => DataCell(Text(attr(product))))
+                  .toList(),
+            );
           }).toList(),
         ),
       ),
@@ -354,9 +349,11 @@ class _DatabasePageState extends State<DatabasePage> {
                     onPressed: _isPlatformFilePickupLoading
                         ? null
                         : () => pickAndReadExcelFile(context),
-                    child: Text(_isPlatformFilePickupLoading
-                        ? 'Loading...'
-                        : 'Pick Excel File'),
+                    child: _excelData.isNotEmpty
+                        ? const Text('Обновить Exel данные')
+                        : Text(_isPlatformFilePickupLoading
+                            ? 'Загрузка...'
+                            : 'Загрузить Exel файл'),
                   ),
                   const SizedBox(width: 10),
                   if (_excelData.isNotEmpty)
