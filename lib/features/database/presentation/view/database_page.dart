@@ -5,6 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// import 'package:wb_supplieses/app/router/app_router.dart';
 import 'package:wb_supplieses/features/database/data/models/product_model.dart';
 import 'package:wb_supplieses/features/database/database.dart';
 
@@ -90,28 +92,30 @@ class _DatabasePageState extends State<DatabasePage> {
   void _filterData(String query) {
     setState(() {
       if (query.isEmpty) {
-        // _filteredData = _excelData;
+        _filteredData = _excelData;
       } else {
-        // _filteredData =
-        //     _excelData.where((row) => matchesQuery(row, query)).toList();
-        print('_filteredData $_filteredData');
+        _filteredData = _excelData
+            .where((row) => matchesQuery(_excelData, row, query))
+            .toList();
       }
       _currentPage = 0; // Reset to the first page after filtering
     });
   }
 
-  bool matchesQuery(List<dynamic> row, String query) {
-    if (row.length > 1 &&
-        row[1]?.toString().toLowerCase().contains(query.toLowerCase()) ==
-            true) {
-      return true;
-    }
-    if (row.length > 3 &&
-        row[3]?.toString().toLowerCase().contains(query.toLowerCase()) ==
-            true) {
-      return true;
-    }
-    return false;
+  bool matchesQuery(
+      List<ProductModel> row, ProductModel product, String query) {
+    bool isMatched = product.productName
+                .toString()
+                .toLowerCase()
+                .contains(query.toLowerCase()) ==
+            true ||
+        product.articleWB
+                .toString()
+                .toLowerCase()
+                .contains(query.toLowerCase()) ==
+            true;
+
+    return isMatched;
   }
 
   Future<List<List<dynamic>>> readExcelFile(PlatformFile file) async {
@@ -169,7 +173,7 @@ class _DatabasePageState extends State<DatabasePage> {
         _searchController.text.isEmpty ? _excelData : _filteredData;
 
     if (displayData.isEmpty) {
-      return const Center(child: Text('Загружите вашу базу данных'));
+      return const Center(child: Text('Карточки не найдены'));
     }
 
     // Calculate pagination
@@ -195,7 +199,7 @@ class _DatabasePageState extends State<DatabasePage> {
     }
 
     // Define table columns based on ProductModel attributes
-    final firstProduct = displayData.first;
+    final firstProduct = _excelData.first;
     final columnLabels = [
       '${firstProduct.groupId}',
       firstProduct.sellersArticle,
@@ -226,12 +230,25 @@ class _DatabasePageState extends State<DatabasePage> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
         child: DataTable(
+          dataRowMaxHeight: double.infinity,
           showCheckboxColumn: false,
           columns: columnLabels.map(_buildColumn).toList(),
           rows: pageData.map((product) {
             return DataRow(
               cells: productAttributes
-                  .map((attr) => DataCell(Text(attr(product))))
+                  .map((attr) => DataCell(
+                        SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 200, maxHeight: 80),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                attr(product),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ))
                   .toList(),
             );
           }).toList(),
@@ -248,37 +265,51 @@ class _DatabasePageState extends State<DatabasePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          icon: const Icon(Icons.chevron_left),
-          onPressed: _currentPage > 0
-              ? () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                }
-              : null,
+        SizedBox(
+          width: 35,
+          height: 35,
+          child: IconButton(
+            iconSize: 25,
+            padding: const EdgeInsets.all(5),
+            icon: const Icon(Icons.chevron_left),
+            onPressed: _currentPage > 0
+                ? () {
+                    setState(() {
+                      _currentPage--;
+                    });
+                  }
+                : null,
+          ),
         ),
         Text(
-          'Page ${_currentPage + 1} of $totalPages',
+          'Страница ${_currentPage + 1} из $totalPages',
           style: const TextStyle(fontSize: 16),
         ),
-        IconButton(
-          icon: const Icon(Icons.chevron_right),
-          onPressed: _currentPage < totalPages - 1
-              ? () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                }
-              : null,
+        SizedBox(
+          width: 35,
+          height: 35,
+          child: IconButton(
+            iconSize: 25,
+            padding: const EdgeInsets.all(5),
+            icon: const Icon(Icons.chevron_right),
+            onPressed: _currentPage < totalPages - 1
+                ? () {
+                    setState(() {
+                      _currentPage++;
+                    });
+                  }
+                : null,
+          ),
         ),
-        const SizedBox(width: 20),
+        const Expanded(
+          child: SizedBox(),
+        ),
         DropdownButton<int>(
           value: _rowsPerPage,
           items: [10, 20, 50, 100].map((int value) {
             return DropdownMenuItem<int>(
               value: value,
-              child: Text('$value rows'),
+              child: Text('$value рядов'),
             );
           }).toList(),
           onChanged: (int? newValue) {
@@ -298,7 +329,25 @@ class _DatabasePageState extends State<DatabasePage> {
   Widget build(BuildContext context) {
     return BlocListener<ProductBloc, ProductState>(
       listener: (context, state) {
+        if (state is ProductLoadingState) {
+          // showDialog(
+          //     context: context,
+          //     builder: (context) => AlertDialog(
+          //         contentPadding: EdgeInsets.zero,
+          //         backgroundColor: Colors.transparent,
+          //         insetPadding: const EdgeInsets.symmetric(horizontal: 175),
+          //         content: Container(
+          //             decoration: BoxDecoration(
+          //                 color: Colors.black.withOpacity(.6),
+          //                 borderRadius:
+          //                     const BorderRadius.all(Radius.circular(12.0))),
+          //             width: 40,
+          //             height: 40,
+          //             child: const CupertinoActivityIndicator())));
+        }
+
         if (state is ProductLoadedState) {
+          // Navigator.of(context, rootNavigator: true).pop('dialog');
           setState(() {
             _excelData = state.products;
           });
@@ -306,7 +355,7 @@ class _DatabasePageState extends State<DatabasePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Excel Reader'),
+          title: const Text('Ваша база товаров'),
           actions: [
             IconButton(
               icon: const Icon(Icons.info_outline),
@@ -315,15 +364,15 @@ class _DatabasePageState extends State<DatabasePage> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Data Statistics'),
+                      title: const Text('Статистика данных'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Total Rows: ${_excelData.length}'),
+                          Text('Кол-во Рядов: ${_excelData.length}'),
                           // Text('Total Columns: ${_excelData[0].length}'),
-                          const Text('Starting Row: 3'),
-                          Text('Rows per page: $_rowsPerPage'),
+                          const Text('Начальный ряд: 3'),
+                          Text('Рядов на странице: $_rowsPerPage'),
                         ],
                       ),
                       actions: [
