@@ -13,14 +13,14 @@ class LoadExcelDataUseCase {
       throw Exception('No valid data in Excel file');
     }
 
-    List<ProductModel> products = excelData.sublist(0).map((row) {
-      print('row $row');
-      // TODO need to update or check
-      return ProductModel.fromExcelRow(row);
-    }).toList();
+    // List<ProductModel> products = excelData.sublist(0).map((row) {
+    //   return ProductModel.fromExcelRow(row);
+    // }).toList();
+    //
+    // print('products $products');
 
     // Load data through repository
-    await repository.loadExcelData(products);
+    await repository.loadExcelData(excelData);
 
     // Fetch and return loaded products
     return await repository.getAllProducts();

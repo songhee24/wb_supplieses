@@ -48,7 +48,6 @@ class _DatabasePageState extends State<DatabasePage> {
       if (result != null) {
         // Read file
         List<List<dynamic>> data = await readExcelFile(result.files.first);
-        print('data ${data}');
         if (context.mounted) {
           context.read<ProductBloc>().add(LoadExcelDataEvent(data));
         }
@@ -175,7 +174,7 @@ class _DatabasePageState extends State<DatabasePage> {
       scrollDirection: Axis.horizontal,
       child: BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
         if(state is ProductLoadedState) {
-          print('state ${state.products}');
+          // print('state ${state.products}');
         }
         return const SingleChildScrollView(
           padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),

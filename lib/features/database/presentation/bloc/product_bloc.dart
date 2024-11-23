@@ -35,8 +35,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       emit(ProductLoadingState());
       final entities = await loadExcelDataUseCase(event.excelData);
-      final products = entities.map((entity) =>
-          ProductModel(
+      final products = entities.map((entity) {
+          return ProductModel(
             id: entity.id,
             groupId: entity.groupId,
             sellersArticle: entity.sellersArticle,
@@ -47,7 +47,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             barcode: entity.barcode,
             size: entity.size,
             russianSize: entity.russianSize,
-          )
+          );}
       ).toList();
       emit(ProductLoadedState(products));
     } catch (e) {
@@ -62,8 +62,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       emit(ProductLoadingState());
       final entities = await fetchProductsUseCase();
-      final products = entities.map((entity) =>
-          ProductModel(
+      final products = entities.map((entity) {
+        print('entity $entity');
+          return ProductModel(
             id: entity.id,
             groupId: entity.groupId,
             sellersArticle: entity.sellersArticle,
@@ -74,7 +75,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             barcode: entity.barcode,
             size: entity.size,
             russianSize: entity.russianSize,
-          )
+          );}
       ).toList();
       emit(ProductLoadedState(products));
     } catch (e) {
