@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class ProductEntity extends Equatable {
   final int? id;
-  final int? groupId;
+  final String? groupId;
   final String sellersArticle;
   final String articleWB;
   final String productName;

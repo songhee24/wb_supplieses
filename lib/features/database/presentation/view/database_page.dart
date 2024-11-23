@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wb_supplieses/features/database/data/models/product_model.dart';
 import 'package:wb_supplieses/features/database/database.dart';
 
 class DatabasePage extends StatefulWidget {
@@ -15,8 +16,8 @@ class DatabasePage extends StatefulWidget {
 }
 
 class _DatabasePageState extends State<DatabasePage> {
-  List<List<dynamic>> _excelData = [];
-  List<List<dynamic>> _filteredData = [];
+  List<ProductModel> _excelData = [];
+  List<ProductModel> _filteredData = [];
   bool _isPlatformFilePickupLoading = false;
   int _currentPage = 0;
   int _rowsPerPage = 10;
@@ -30,6 +31,8 @@ class _DatabasePageState extends State<DatabasePage> {
     _horizontalController.dispose();
     _verticalController.dispose();
     _searchController.dispose();
+
+    context.read<ProductBloc>().add(FetchProductsEvent());
     super.dispose();
   }
 
@@ -52,9 +55,9 @@ class _DatabasePageState extends State<DatabasePage> {
           context.read<ProductBloc>().add(LoadExcelDataEvent(data));
         }
 
-        setState(() {
-          _excelData = data;
-        });
+        // setState(() {
+        //   _excelData = data;
+        // });
       }
     } catch (e) {
       if (context.mounted) {
@@ -82,10 +85,10 @@ class _DatabasePageState extends State<DatabasePage> {
   void _filterData(String query) {
     setState(() {
       if (query.isEmpty) {
-        _filteredData = _excelData;
+        // _filteredData = _excelData;
       } else {
-        _filteredData =
-            _excelData.where((row) => matchesQuery(row, query)).toList();
+        // _filteredData =
+        //     _excelData.where((row) => matchesQuery(row, query)).toList();
         print('_filteredData $_filteredData');
       }
       _currentPage = 0; // Reset to the first page after filtering
@@ -156,36 +159,94 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   Widget _buildDataTable() {
-    // List<List<dynamic>> displayData = _searchController.text.isEmpty
-    //     ? _excelData
-    //     : _filteredData;
-    //
-    // if (displayData.isEmpty) return const Center(child: Text('No data found'));
-    //
-    // // Calculate pagination
-    // int startIndex = _currentPage * _rowsPerPage + 1;
-    // int endIndex = startIndex + _rowsPerPage;
-    // if (endIndex > displayData.length) endIndex = displayData.length;
-    //
-    // // Get current page data
-    // List<List<dynamic>> pageData = displayData.sublist(startIndex, endIndex);
+    List<ProductModel> displayData =
+        _searchController.text.isEmpty ? _excelData : _filteredData;
+
+    if (displayData.isEmpty) return const Center(child: Text('No data found'));
+
+    // Calculate pagination
+    int startIndex = _currentPage * _rowsPerPage + 1;
+    int endIndex = startIndex + _rowsPerPage;
+    if (endIndex > displayData.length) endIndex = displayData.length;
+
+    // Get current page data
+    List<ProductModel> pageData = displayData.sublist(startIndex, endIndex);
+
+    final ProductModel column = displayData[0];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
-        if(state is ProductLoadedState) {
-          // print('state ${state.products}');
-        }
-        return const SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
-          child: Text('data'),
-        );
-      }),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight * 2),
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: [
+            DataColumn(
+                label: Text(
+              '${column.id}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.sellersArticle,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.articleWB,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.productName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.category,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.brand,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.barcode,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.size,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataColumn(
+                label: Text(
+              column.russianSize,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )),
+          ],
+          rows: pageData.map((product) {
+            return DataRow(cells: [
+              DataCell(Text('${product.groupId}')),
+              DataCell(Text(product.sellersArticle)),
+              DataCell(Text(product.articleWB)),
+              DataCell(Text(product.productName)),
+              DataCell(Text(product.category)),
+              DataCell(Text(product.brand)),
+              DataCell(Text(product.barcode)),
+              DataCell(Text(product.size)),
+              DataCell(Text(product.russianSize)),
+            ]);
+          }).toList(),
+        ),
+      ),
     );
   }
 
   Widget _buildPagination() {
-    if (_excelData.isEmpty) return SizedBox.shrink();
+    if (_excelData.isEmpty) return const SizedBox.shrink();
 
     int totalPages = (_excelData.length / _rowsPerPage).ceil();
 
@@ -240,82 +301,91 @@ class _DatabasePageState extends State<DatabasePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Excel Reader'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () {
-              if (_excelData.isNotEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Data Statistics'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Total Rows: ${_excelData.length}'),
-                        Text('Total Columns: ${_excelData[0].length}'),
-                        const Text('Starting Row: 3'),
-                        Text('Rows per page: $_rowsPerPage'),
+    return BlocListener<ProductBloc, ProductState>(
+      listener: (context, state) {
+        if (state is ProductLoadedState) {
+          setState(() {
+            _excelData = state.products;
+          });
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Excel Reader'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () {
+                if (_excelData.isNotEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Data Statistics'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Total Rows: ${_excelData.length}'),
+                          // Text('Total Columns: ${_excelData[0].length}'),
+                          const Text('Starting Row: 3'),
+                          Text('Rows per page: $_rowsPerPage'),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        ),
                       ],
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: _isPlatformFilePickupLoading
+                        ? null
+                        : () => pickAndReadExcelFile(context),
+                    child: Text(_isPlatformFilePickupLoading
+                        ? 'Loading...'
+                        : 'Pick Excel File'),
                   ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-            child: Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _isPlatformFilePickupLoading
-                      ? null
-                      : () => pickAndReadExcelFile(context),
-                  child: Text(_isPlatformFilePickupLoading
-                      ? 'Loading...'
-                      : 'Pick Excel File'),
-                ),
-                const SizedBox(width: 10),
-                if (_excelData.isNotEmpty)
-                  Expanded(
-                    child: SizedBox(
-                      height: 40,
-                      child: TextField(
-                        controller: _searchController,
-                        onChanged: _filterData,
-                        decoration: const InputDecoration(
-                          labelText: 'Search',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.zero,
-                          prefixIcon: Icon(Icons.search),
+                  const SizedBox(width: 10),
+                  if (_excelData.isNotEmpty)
+                    Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _filterData,
+                          decoration: const InputDecoration(
+                            labelText: 'Search',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.zero,
+                            prefixIcon: Icon(Icons.search),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
+                ],
+              ),
+              _buildPagination(),
+              Expanded(
+                child: _isPlatformFilePickupLoading
+                    ? const Center(child: CupertinoActivityIndicator())
+                    : _buildDataTable(),
+              ),
+            ],
           ),
-          _buildPagination(),
-          Expanded(
-            child: _isPlatformFilePickupLoading
-                ? const Center(child: CupertinoActivityIndicator())
-                : _buildDataTable(),
-          ),
-        ],
+        ),
       ),
     );
   }

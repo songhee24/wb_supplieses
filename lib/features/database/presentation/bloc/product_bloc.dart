@@ -63,7 +63,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductLoadingState());
       final entities = await fetchProductsUseCase();
       final products = entities.map((entity) {
-        print('entity $entity');
           return ProductModel(
             id: entity.id,
             groupId: entity.groupId,

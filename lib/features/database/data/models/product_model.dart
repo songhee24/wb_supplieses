@@ -32,7 +32,8 @@ class ProductModel extends ProductEntity {
 
   factory ProductModel.fromExcelRow(List<dynamic> row) {
     return ProductModel(
-      groupId: row[0] is int ? row[0] : null,
+      // groupId: row[0] is int ? row[0] : null,
+      groupId: row[0],
       sellersArticle: row[1]?.toString() ?? '',
       articleWB: row[2]?.toString() ?? '',
       productName: row[3]?.toString() ?? '',
