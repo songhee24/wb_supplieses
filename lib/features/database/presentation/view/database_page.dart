@@ -388,11 +388,11 @@ class _DatabasePageState extends State<DatabasePage> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-          child: Column(
-            children: [
-              Row(
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+              child: Row(
                 children: [
                   ElevatedButton(
                     onPressed: _isPlatformFilePickupLoading
@@ -423,14 +423,14 @@ class _DatabasePageState extends State<DatabasePage> {
                     ),
                 ],
               ),
-              _buildPagination(),
-              Expanded(
-                child: _isPlatformFilePickupLoading
-                    ? const Center(child: CupertinoActivityIndicator())
-                    : _buildDataTable(),
-              ),
-            ],
-          ),
+            ),
+            Padding(padding: const EdgeInsets.only(right: 16, left: 5),child: _buildPagination(),),
+            Expanded(
+              child: _isPlatformFilePickupLoading
+                  ? const Center(child: CupertinoActivityIndicator())
+                  : _buildDataTable(),
+            ),
+          ],
         ),
       ),
     );

@@ -50,7 +50,6 @@ class LocalDatabaseDatasource {
   Future<List<ProductModel>> getAllProducts() async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query('products');
-    print('maps $maps');
     return List.generate(maps.length, (i) => ProductModel.fromMap(maps[i]));
   }
 
@@ -59,7 +58,6 @@ class LocalDatabaseDatasource {
     final batch = db.batch();
 
     for (var product in products) {
-      print('insertBulkProducts product $product');
       batch.insert('products', product.toMap());
     }
 
