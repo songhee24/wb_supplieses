@@ -3,10 +3,12 @@ import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 class BoxEntity extends Equatable {
   final String? id;
-  final List<ProductEntity?> productEntity;
+  final String? suppliesId;
+  final String boxNumber;
+  final List<ProductEntity?> productEntities;
 
-  const BoxEntity({required this.id, required this.productEntity});
+  const BoxEntity({required this.id,  required this.boxNumber, required this.productEntities, required this.suppliesId,});
 
   @override
-  List<Object?> get props => [id, productEntity];
+  List<Object?> get props => [id, productEntities, suppliesId, boxNumber];
 }

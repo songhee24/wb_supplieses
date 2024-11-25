@@ -3,6 +3,7 @@ import '../entities/product_entity.dart';
 class ProductModel extends ProductEntity {
   const ProductModel({
     super.id,
+    super.boxId,
     required super.groupId,
     required super.sellersArticle,
     required super.articleWB,
@@ -18,6 +19,7 @@ class ProductModel extends ProductEntity {
   ProductEntity toEntity() {
     return ProductEntity(
       id: id,
+      boxId: boxId,
       groupId: groupId,
       sellersArticle: sellersArticle,
       articleWB: articleWB,
@@ -47,6 +49,8 @@ class ProductModel extends ProductEntity {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
+      'boxId': boxId,
       'group_id': groupId == null ? '' : groupId.toString(),
       'sellers_article': sellersArticle,
       'article_wb': articleWB,
@@ -62,6 +66,7 @@ class ProductModel extends ProductEntity {
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
       id: map['id'],
+      boxId: map['boxId'],
       groupId: map['group_id'].toString(),
       sellersArticle: map['sellers_article'],
       articleWB: map['article_wb'],
