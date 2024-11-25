@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/lib/router/config.dart';
 
@@ -11,7 +12,7 @@ import '../../bloc/supplies_bloc.dart';
 import '../widgets.dart';
 
 class SuppliesCard extends StatelessWidget {
-  final Supplies supplies;
+  final SuppliesEntity supplies;
 
   const SuppliesCard({super.key, required this.supplies});
 

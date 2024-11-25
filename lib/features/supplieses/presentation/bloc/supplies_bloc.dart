@@ -1,30 +1,33 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:wb_supplieses/features/supplieses/data/repositories/supplies_firestore_repository.dart';
-import 'package:wb_supplieses/features/supplieses/models/models.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
+import 'package:wb_supplieses/features/supplieses/domain/repositories/supplies_repository.dart';
 
 part 'supplies_event.dart';
 part 'supplies_state.dart';
 
 class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
-  final SuppliesFirestoreRepository suppliesRepository;
+  final SuppliesRepository suppliesRepository;
 
   SuppliesBloc(this.suppliesRepository) : super(const SuppliesState()) {
     on<SuppliesGetEvent>(_onGetSupplies);
-    on<SuppliesCreateNewEvent>(_onAddNewSupplies);
     on<SuppliesDeleteEvent>(_onDeleteSupplies);
     on<SuppliesGetByIdEvent>(_onGetSupplyById);
     on<SuppliesEditEvent>(_onEditSupply);
+    on<SuppliesCreateNewEvent>(_onAddNewSupplies);
   }
 
   Future<void> _onAddNewSupplies(
       SuppliesCreateNewEvent event, Emitter<SuppliesState> emit) async {
     try {
       emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
-      final newSupply = Supplies(
-          createdAt: DateTime.timestamp(),
-          name: event.name,
-          boxCount: event.boxCount);
+      final newSupply = SuppliesEntity(
+        id: null, // ID will be assigned by Firestore
+        createdAt: DateTime.now(),
+        name: event.name,
+        boxCount: event.boxCount,
+        status: "created",
+      );
       await suppliesRepository.addSupply(newSupply);
 
       final suppliesList = await suppliesRepository.getSupplies();

@@ -4,22 +4,22 @@ enum SuppliesStatus { initial, loading, success, successEdit, failure }
 
 final class SuppliesState extends Equatable {
   final SuppliesStatus suppliesStatus;
-  final List<Supplies> supplieses;
-  final Supplies? selectedSupply;
+  final List<SuppliesEntity> supplieses;
+  final SuppliesEntity? selectedSupply;
   final DateTime? createdAt;
 
   const SuppliesState({
     this.createdAt,
     this.suppliesStatus = SuppliesStatus.initial,
-    this.supplieses = const <Supplies>[],
+    this.supplieses = const <SuppliesEntity>[],
     this.selectedSupply,
   });
 
   SuppliesState copyWith({
     SuppliesStatus? suppliesStatus,
-    List<Supplies>? supplieses,
+    List<SuppliesEntity>? supplieses,
     DateTime? createdAt,
-    Supplies? selectedSupply,
+    SuppliesEntity? selectedSupply,
   }) {
     return SuppliesState(
       suppliesStatus: suppliesStatus ?? this.suppliesStatus,

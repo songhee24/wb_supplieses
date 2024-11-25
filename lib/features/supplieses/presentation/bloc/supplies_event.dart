@@ -17,7 +17,7 @@ final class SuppliesCreateNewEvent extends SuppliesEvent {
 
 class SuppliesEditEvent extends SuppliesEvent {
   final String suppliesId;
-  final Supplies updatedSupply;
+  final SuppliesEntity updatedSupply;
 
   SuppliesEditEvent({required this.suppliesId, required this.updatedSupply});
 

@@ -6,7 +6,7 @@ import 'package:wb_supplieses/shared/database/local_database_datasource.dart';
 import 'features/exel_products/data/datasources/product_datasource.dart';
 import 'features/exel_products/data/repositories/product_repository_impl.dart';
 import 'features/exel_products/presentation/bloc/product_bloc.dart';
-import 'features/supplieses/data/repositories/supplies_firestore_repository.dart';
+import 'features/supplieses/data/repositories/supplies_firestore_repository_impl.dart';
 import 'firebase_options.dart';
 
 import 'package:wb_supplieses/app/app.dart';
@@ -17,7 +17,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final suppliesRepository = SuppliesFirestoreRepository();
+  final suppliesRepository = SuppliesFirestoreRepositoryImpl();
 
   final localDatabaseDatasource = await LocalDatabaseDatasource.instance.database;
   final productDatasource = ProductDatasource(db: localDatabaseDatasource);

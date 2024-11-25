@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wb_supplieses/app/layout/layout_scaffold.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 import '../../bloc/supplies_bloc.dart';
@@ -147,7 +148,7 @@ class _SuppliesFormBottomSheetState extends State<SuppliesFormBottomSheet> {
                                         .add(
                                       SuppliesEditEvent(
                                           suppliesId: widget.suppliesId!,
-                                          updatedSupply: Supplies(
+                                          updatedSupply: SuppliesEntity(
                                             name: suppliesName,
                                             boxCount: boxCount,
                                             createdAt: DateTime.timestamp(),
