@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../models/product_model.dart';
+import '../../../../shared/models/product_model.dart';
 
 class ProductDatasource {
   final Database db;

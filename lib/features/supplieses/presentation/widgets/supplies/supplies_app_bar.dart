@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wb_supplieses/features/supplieses/supplieses.dart';
+
+import '../../bloc/supplies_bloc.dart';
 
 class SuppliesAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SuppliesAppBar({super.key, this.onAddBox});

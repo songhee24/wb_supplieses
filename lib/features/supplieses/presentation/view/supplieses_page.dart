@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
-import 'package:wb_supplieses/features/supplieses/supplieses.dart';
+
+import '../bloc/supplies_bloc.dart';
+import '../bloc/supplies_tab_index_cubit.dart';
+import '../widgets/widgets.dart';
 
 class SuppliesesPage extends StatefulWidget {
   const SuppliesesPage({super.key});

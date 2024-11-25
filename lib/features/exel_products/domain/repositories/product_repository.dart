@@ -1,4 +1,4 @@
-import '../entities/product_entity.dart';
+import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 abstract class ProductRepository {
   Future<List<ProductEntity>> getAllProducts();

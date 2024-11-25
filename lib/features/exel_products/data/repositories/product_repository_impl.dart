@@ -1,9 +1,9 @@
-import 'package:wb_supplieses/features/database/data/datasources/product_datasource.dart';
 
-import '../../domain/entities/product_entity.dart';
+import '../../../../shared/entities/product_entity.dart';
 import '../../domain/repositories/product_repository.dart';
 // import '../datasources/local_database_datasource.dart';
-import '../models/product_model.dart';
+import '../datasources/product_datasource.dart';
+import '../../../../shared/models/product_model.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductDatasource productDatasource;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:wb_supplieses/features/database/data/repositories/product_repository_impl.dart';
-import 'package:wb_supplieses/features/database/presentation/bloc/product_bloc.dart';
-import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/bloc/supplies_tab_index_cubit.dart';
 import 'package:wb_supplieses/shared/database/local_database_datasource.dart';
-import 'features/database/data/datasources/product_datasource.dart';
+import 'features/exel_products/data/datasources/product_datasource.dart';
+import 'features/exel_products/data/repositories/product_repository_impl.dart';
+import 'features/exel_products/presentation/bloc/product_bloc.dart';
 import 'features/supplieses/data/repositories/supplies_firestore_repository.dart';
 import 'firebase_options.dart';
 

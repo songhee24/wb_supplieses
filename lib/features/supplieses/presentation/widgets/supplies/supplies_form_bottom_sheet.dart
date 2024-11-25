@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wb_supplieses/app/layout/layout_scaffold.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
+import '../../bloc/supplies_bloc.dart';
+
 class SuppliesFormBottomSheet extends StatefulWidget {
   final String? suppliesId;
 

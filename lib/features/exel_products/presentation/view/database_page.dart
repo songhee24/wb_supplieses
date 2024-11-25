@@ -6,8 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:wb_supplieses/features/database/database.dart';
-import 'package:wb_supplieses/features/database/domain/entities/product_entity.dart';
+import '../../database.dart';
+import '../../../../shared/entities/product_entity.dart';
+
 
 class DatabasePage extends StatefulWidget {
   const DatabasePage({super.key});

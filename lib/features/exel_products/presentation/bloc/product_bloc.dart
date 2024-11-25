@@ -1,11 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:wb_supplieses/features/database/domain/entities/product_entity.dart';
 
 import '../../domain/repositories/product_repository.dart';
 import '../../domain/usecases/fetch_product_use_case.dart';
 import '../../domain/usecases/load_excel_data_use_case.dart';
-import '../../data/models/product_model.dart';
+import '../../../../shared/entities/product_entity.dart';
 
 part 'product_event.dart';
 part 'product_state.dart';
@@ -36,20 +35,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       emit(ProductLoadingState());
       final entities = await loadExcelDataUseCase(event.excelData);
-      final products = entities.map((entity) {
-          return ProductModel(
-            id: entity.id,
-            groupId: entity.groupId,
-            sellersArticle: entity.sellersArticle,
-            articleWB: entity.articleWB,
-            productName: entity.productName,
-            category: entity.category,
-            brand: entity.brand,
-            barcode: entity.barcode,
-            size: entity.size,
-            russianSize: entity.russianSize,
-          );}
-      ).toList();
+      // final products = entities.map((entity) {
+      //     return ProductModel(
+      //       id: entity.id,
+      //       groupId: entity.groupId,
+      //       sellersArticle: entity.sellersArticle,
+      //       articleWB: entity.articleWB,
+      //       productName: entity.productName,
+      //       category: entity.category,
+      //       brand: entity.brand,
+      //       barcode: entity.barcode,
+      //       size: entity.size,
+      //       russianSize: entity.russianSize,
+      //     );}
+      // ).toList();
       emit(ProductLoadedState(entities));
     } catch (e) {
       emit(ProductErrorState('Failed to load Excel data: ${e.toString()}'));
@@ -63,20 +62,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       emit(ProductLoadingState());
       final entities = await fetchProductsUseCase();
-      final products = entities.map((entity) {
-          return ProductModel(
-            id: entity.id,
-            groupId: entity.groupId,
-            sellersArticle: entity.sellersArticle,
-            articleWB: entity.articleWB,
-            productName: entity.productName,
-            category: entity.category,
-            brand: entity.brand,
-            barcode: entity.barcode,
-            size: entity.size,
-            russianSize: entity.russianSize,
-          );}
-      ).toList();
+      // final products = entities.map((entity) {
+      //     return ProductModel(
+      //       id: entity.id,
+      //       groupId: entity.groupId,
+      //       sellersArticle: entity.sellersArticle,
+      //       articleWB: entity.articleWB,
+      //       productName: entity.productName,
+      //       category: entity.category,
+      //       brand: entity.brand,
+      //       barcode: entity.barcode,
+      //       size: entity.size,
+      //       russianSize: entity.russianSize,
+      //     );}
+      // ).toList();
       emit(ProductLoadedState(entities));
     } catch (e) {
       emit(ProductErrorState('Failed to fetch products: ${e.toString()}'));

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wb_supplieses/app/router/bottom_destination.dart';
-import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
-import 'package:wb_supplieses/features/supplieses/widgets/supplies/supplies_form_bottom_sheet.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/bloc/supplies_tab_index_cubit.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/widgets/widgets.dart';
 
 class LayoutScaffold extends StatelessWidget {
   const LayoutScaffold(
