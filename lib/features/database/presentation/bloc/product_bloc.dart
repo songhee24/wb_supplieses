@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:wb_supplieses/features/database/domain/entities/product_entity.dart';
 
 import '../../domain/repositories/product_repository.dart';
 import '../../domain/usecases/fetch_product_use_case.dart';
@@ -49,7 +50,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             russianSize: entity.russianSize,
           );}
       ).toList();
-      emit(ProductLoadedState(products));
+      emit(ProductLoadedState(entities));
     } catch (e) {
       emit(ProductErrorState('Failed to load Excel data: ${e.toString()}'));
     }
@@ -76,7 +77,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             russianSize: entity.russianSize,
           );}
       ).toList();
-      emit(ProductLoadedState(products));
+      emit(ProductLoadedState(entities));
     } catch (e) {
       emit(ProductErrorState('Failed to fetch products: ${e.toString()}'));
     }

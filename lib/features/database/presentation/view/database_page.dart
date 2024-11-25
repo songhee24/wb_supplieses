@@ -6,9 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// import 'package:wb_supplieses/app/router/app_router.dart';
-import 'package:wb_supplieses/features/database/data/models/product_model.dart';
 import 'package:wb_supplieses/features/database/database.dart';
+import 'package:wb_supplieses/features/database/domain/entities/product_entity.dart';
 
 class DatabasePage extends StatefulWidget {
   const DatabasePage({super.key});
@@ -18,8 +17,8 @@ class DatabasePage extends StatefulWidget {
 }
 
 class _DatabasePageState extends State<DatabasePage> {
-  List<ProductModel> _excelData = [];
-  List<ProductModel> _filteredData = [];
+  List<ProductEntity> _excelData = [];
+  List<ProductEntity> _filteredData = [];
   bool _isPlatformFilePickupLoading = false;
   int _currentPage = 0;
   int _rowsPerPage = 10;
@@ -103,7 +102,7 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   bool matchesQuery(
-      List<ProductModel> row, ProductModel product, String query) {
+      List<ProductEntity> row, ProductEntity product, String query) {
     bool isMatched = product.productName
                 .toString()
                 .toLowerCase()
@@ -169,7 +168,7 @@ class _DatabasePageState extends State<DatabasePage> {
 
   Widget _buildDataTable() {
     // Determine the data to display
-    List<ProductModel> displayData =
+    List<ProductEntity> displayData =
         _searchController.text.isEmpty ? _excelData : _filteredData;
 
     if (displayData.isEmpty) {
@@ -182,7 +181,7 @@ class _DatabasePageState extends State<DatabasePage> {
     endIndex = endIndex > displayData.length ? displayData.length : endIndex;
 
     // Extract current page data
-    List<ProductModel> pageData = displayData.sublist(startIndex, endIndex);
+    List<ProductEntity> pageData = displayData.sublist(startIndex, endIndex);
 
     if (pageData.isNotEmpty) {
       pageData = pageData.sublist(1); // Skip the first index
@@ -213,7 +212,7 @@ class _DatabasePageState extends State<DatabasePage> {
     ];
 
     // Convert product attributes to a list for easier mapping
-    List<String Function(ProductModel)> productAttributes = [
+    List<String Function(ProductEntity)> productAttributes = [
       (p) => p.groupId.toString(),
       (p) => p.sellersArticle,
       (p) => p.articleWB,

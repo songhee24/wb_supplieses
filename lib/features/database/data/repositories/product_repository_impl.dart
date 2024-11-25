@@ -1,17 +1,19 @@
+import 'package:wb_supplieses/features/database/data/datasources/product_datasource.dart';
+
 import '../../domain/entities/product_entity.dart';
 import '../../domain/repositories/product_repository.dart';
-import '../datasources/local_database_datasource.dart';
+// import '../datasources/local_database_datasource.dart';
 import '../models/product_model.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  final LocalDatabaseDatasource localDatasource;
+  final ProductDatasource productDatasource;
 
-  ProductRepositoryImpl({required this.localDatasource});
+  ProductRepositoryImpl({required this.productDatasource});
 
   @override
   Future<List<ProductEntity>> getAllProducts() async {
     try {
-      final products = await localDatasource.getAllProducts();
+      final products = await productDatasource.getAllProducts();
       print('products $products');
       return products
           .map<ProductEntity>((p) => ProductEntity(
@@ -43,8 +45,8 @@ class ProductRepositoryImpl implements ProductRepository {
 
 
       // Clear existing data and insert new products
-      await localDatasource.deleteAllProducts();
-      await localDatasource.insertBulkProducts(products);
+      await productDatasource.deleteAllProducts();
+      await productDatasource.insertBulkProducts(products);
     } catch (e) {
       throw Exception('Failed to load Excel data: ${e.toString()}');
     }

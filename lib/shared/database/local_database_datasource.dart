@@ -1,6 +1,5 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/product_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LocalDatabaseDatasource {
   static final LocalDatabaseDatasource instance = LocalDatabaseDatasource._init();
@@ -10,7 +9,7 @@ class LocalDatabaseDatasource {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('products.db');
+    _database = await _initDB('app.db');
     return _database!;
   }
 
@@ -40,32 +39,14 @@ class LocalDatabaseDatasource {
       russian_size TEXT
     )
     ''');
-  }
 
-  Future<int> insertProduct(ProductModel product) async {
-    final db = await instance.database;
-    return await db.insert('products', product.toMap());
-  }
-
-  Future<List<ProductModel>> getAllProducts() async {
-    final db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('products');
-    return List.generate(maps.length, (i) => ProductModel.fromMap(maps[i]));
-  }
-
-  Future<void> insertBulkProducts(List<ProductModel> products) async {
-    final db = await instance.database;
-    final batch = db.batch();
-
-    for (var product in products) {
-      batch.insert('products', product.toMap());
-    }
-
-    await batch.commit(noResult: true);
-  }
-
-  Future<void> deleteAllProducts() async {
-    final db = await instance.database;
-    await db.delete('products');
+    // await db.execute('''
+    // CREATE TABLE orders (
+    //   id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //   order_id TEXT,
+    //   customer_name TEXT,
+    //   total_amount REAL
+    // )
+    // ''');
   }
 }

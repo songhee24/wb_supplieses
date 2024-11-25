@@ -4,7 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:wb_supplieses/features/database/data/repositories/product_repository_impl.dart';
 import 'package:wb_supplieses/features/database/presentation/bloc/product_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
-import 'features/database/data/datasources/local_database_datasource.dart';
+import 'package:wb_supplieses/shared/database/local_database_datasource.dart';
+import 'features/database/data/datasources/product_datasource.dart';
 import 'features/supplieses/data/repositories/supplies_firestore_repository.dart';
 import 'firebase_options.dart';
 
@@ -18,9 +19,10 @@ Future<void> main() async {
   );
   final suppliesRepository = SuppliesFirestoreRepository();
 
-  final localDatabaseDatasource = LocalDatabaseDatasource.instance;
+  final localDatabaseDatasource = await LocalDatabaseDatasource.instance.database;
+  final productDatasource = ProductDatasource(db: localDatabaseDatasource);
+  final productRepositoryImpl = ProductRepositoryImpl(productDatasource: productDatasource);
 
-  final productRepositoryImpl = ProductRepositoryImpl(localDatasource: localDatabaseDatasource);
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (_) => SuppliesTabIndexCubit(),

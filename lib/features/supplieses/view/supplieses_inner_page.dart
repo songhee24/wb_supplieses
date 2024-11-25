@@ -13,7 +13,7 @@ class SuppliesesInnerPage extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
             toolbarHeight: kToolbarHeight * 1.5,
