@@ -87,7 +87,7 @@ class SuppliesCard extends StatelessWidget {
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
                 width: double.infinity,
-                height: 100,
+                height: 120,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(12)),
                   // border: Border.all(color: Color(0xFF235F75), width: 1),
@@ -108,27 +108,35 @@ class SuppliesCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            supplies.name,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text('${supplies.boxCount}'),
-                              const SizedBox(width: 4),
-                              Image.asset(
-                                'lib/assets/box.png',
-                                width: 28,
-                                height: 28,
-                              )
-                            ],
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  supplies.name,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('${supplies.boxCount}'),
+                                const SizedBox(width: 4),
+                                Image.asset(
+                                  'lib/assets/box.png',
+                                  width: 28,
+                                  height: 28,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 12),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
