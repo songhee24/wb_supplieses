@@ -34,6 +34,9 @@ class LayoutScaffold extends StatelessWidget {
                 return FloatingActionButton(
                   onPressed: () {
                     if (suppliesId != null) {
+                      showModalBottomSheet(isScrollControlled: true,context: context, builder: (BuildContext context) {
+                        return const BoxFormBottomSheet();
+                      });
                     } else if (selectedTabIndex == 0) {
                       showModalBottomSheet(
                           isScrollControlled: true,
@@ -42,7 +45,7 @@ class LayoutScaffold extends StatelessWidget {
                             return const SuppliesFormBottomSheet();
                           });
                     } else if (selectedTabIndex == 1) {
-                      // Action for the second tab
+
                     }
                   },
                   child: const Icon(Icons.add),
