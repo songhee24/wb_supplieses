@@ -10,9 +10,4 @@ abstract class SuppliesRepository {
   Future<void> editSupply(String suppliesId, SuppliesEntity updatedSupply);
   Future<void> updateStatus(String suppliesId, String newStatus);
   Future<void> deleteSupply(String suppliesId);
-
-  Future<void> addBox({required String suppliesId, required String boxNumber,
-    required List<ProductEntity> productEntities});
-
-  Future<List<BoxEntity>?> getSupplyBoxesById(String suppliesId);
 }
