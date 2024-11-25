@@ -8,8 +8,6 @@ import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entit
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/lib/router/config.dart';
 
-import '../../bloc/supplies_bloc.dart';
-import '../widgets.dart';
 
 class SuppliesCard extends StatelessWidget {
   final SuppliesEntity supplies;
