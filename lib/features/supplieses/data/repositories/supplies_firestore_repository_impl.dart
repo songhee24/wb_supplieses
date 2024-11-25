@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wb_supplieses/features/supplieses/data/models/box_model.dart';
 import 'package:wb_supplieses/features/supplieses/domain/repositories/supplies_repository.dart';
+import 'package:wb_supplieses/shared/models/product_model.dart';
 
 import '../../domain/entities/supplies_entity.dart';
 import '../models/supplies_model.dart';
@@ -113,6 +115,46 @@ class SuppliesFirestoreRepositoryImpl implements SuppliesRepository {
       await batch.commit();
     } catch (e) {
       throw Exception('Failed to delete supply: $e');
+    }
+  }
+
+  @override
+  Future<SuppliesEntity?> getSupplyBoxesById(String suppliesId) async {
+    try {
+      final docSnapshot = await _firestore.collection('supplies').doc(suppliesId).get();
+      if (docSnapshot.exists) {
+        // Extract the SuppliesModel
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        final suppliesModel = SuppliesModel.fromMap(data).copyWith(id: docSnapshot.id);
+
+        // Fetch the related boxes from the 'boxes' collection
+        final boxQuerySnapshot = await _firestore
+            .collection('boxes')
+            .where('suppliesId', isEqualTo: suppliesId)
+            .get();
+
+        // Map boxes to BoxModel
+        final boxes = boxQuerySnapshot.docs.map((boxDoc) {
+          final boxData = boxDoc.data();
+
+          // Fetch the products inside the box
+          final productEntities = (boxData['productEntity'] as List<dynamic>).map((productData) {
+            return ProductModel.fromMap(productData as Map<String, dynamic>);
+          }).toList();
+
+          return BoxModel.fromMap({
+            'id': boxDoc.id,
+            'productEntity': productEntities,
+          });
+        }).toList();
+
+        // Return the supplies with boxes included
+        return suppliesModel.copyWith(boxes: boxes.map((box) => box.toEntity()).toList());
+      }
+
+      return null;
+    } catch(e) {
+      throw Exception('Failed to get supply boxes: $e');
     }
   }
 }
