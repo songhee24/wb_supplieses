@@ -14,20 +14,39 @@ class BoxFormBottomSheet extends StatefulWidget {
 
 class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   final _formKey = GlobalKey<FormState>();
-  final List<TextEditingController> _controllers = [];
+  final List<Map<String, TextEditingController>> _controllers = [];
   final List<ProductEntity?> _selectedProducts = [];
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
+    // Dispose all controllers to free up resources
+    for (var map in _controllers) {
+      for (var controller in map.values) {
+        controller.dispose();
+      }
     }
     super.dispose();
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _controllers.add({
+        'text': TextEditingController(),
+        'size': TextEditingController(),
+      });
+      _selectedProducts.add(null);
+    });
+  }
+
   void _addSearchField() {
     setState(() {
-      _controllers.add(TextEditingController());
+      _controllers.add({
+        'text': TextEditingController(),
+        'size': TextEditingController(),
+      });
       _selectedProducts.add(null);
     });
   }
@@ -79,14 +98,17 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                             children: <Widget>[
                               ...List.generate(
                                 _controllers.length,
-                                (index) => Padding(
+                                (index) {
+                                  final controllers = _controllers[index];
+                                  return Padding(
                                   padding: const EdgeInsets.only(bottom: 8),
                                   child: BoxSearchInputSelector(
-                                    controller: _controllers[index],
+                                    textController: controllers['text']!,
+                                    sizeController: controllers['size']!,
                                     onProductSelected: (p) =>
                                         _onProductSelected(index, p),
                                   ),
-                                ),
+                                );}
                               ),
                             ],
                           ),

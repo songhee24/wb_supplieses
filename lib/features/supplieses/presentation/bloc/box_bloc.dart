@@ -31,7 +31,8 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       emit(BoxSearchLoading());
 
       try {
-        final results = await boxRepository.searchProducts(query:event.query);
+        final results = await boxRepository.searchProducts(query:event.query, size: event.size);
+        print('results $results');
         emit(BoxSearchSuccess(results));
       } catch (error) {
         emit(BoxSearchError(error.toString()));

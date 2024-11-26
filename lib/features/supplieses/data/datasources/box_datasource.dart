@@ -10,21 +10,16 @@ class BoxDatasource {
   Future<List<ProductModel>> searchProducts({required String query, String? size}) async {
     // Base query components
     String whereClause = '''
-    sellers_article LIKE ? OR 
-    article_wb LIKE ? OR 
-    product_name LIKE ?
+    (sellers_article LIKE ? OR 
+     article_wb LIKE ? OR 
+     product_name LIKE ?)
   ''';
     List<String> whereArgs = ['%$query%', '%$query%', '%$query%'];
 
-    // If size is provided, add additional conditions
+    // If size is provided, add it as an additional condition
     if (size != null && size.isNotEmpty) {
-      whereClause += '''
-      AND (
-        size LIKE ? OR 
-        russian_size LIKE ?
-      )
-    ''';
-      whereArgs.addAll(['%$size%', '%$size%']);
+      whereClause += ' AND size = ?';
+      whereArgs.add(size); // Exact match for size
     }
 
     // Execute the query

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,17 +6,19 @@ import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 class BoxSearchInputSelector extends StatefulWidget {
-  final TextEditingController controller;
+  final TextEditingController textController;
+  final TextEditingController sizeController;
   final String? Function(String?)? validator;
   final ProductEntity? initialProduct;
   final ValueChanged<ProductEntity?> onProductSelected;
 
   const BoxSearchInputSelector({
     super.key,
-    required this.controller,
+    required this.textController,
     this.validator,
     this.initialProduct,
     required this.onProductSelected,
+    required this.sizeController,
   });
 
   @override
@@ -36,7 +39,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
     setState(() {
       _selectedProduct = null;
       widget.onProductSelected(null);
-      widget.controller.clear();
+      widget.textController.clear();
       _isDropdownVisible = false;
     });
   }
@@ -56,62 +59,66 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: widget.controller,
-                    validator: widget.validator,
-                    onChanged: (query) {
-                      if (query.isNotEmpty) {
-                        setState(() {
-                          _isDropdownVisible = true;
-                        });
-                        context.read<BoxBloc>().add(
-                          BoxSearchProductsEvent(query: query),
-                        );
-                      } else {
-                        setState(() {
-                          _isDropdownVisible = false;
-                        });
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      labelText: 'Поиск товара для коробки',
+              Row(
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: TextFormField(
+                      controller: widget.textController,
+                      validator: widget.validator,
+                      onChanged: (query) {
+                        if (query.isNotEmpty) {
+                          setState(() {
+                            _isDropdownVisible = true;
+                          });
+                          context.read<BoxBloc>().add(
+                                BoxSearchProductsEvent(query: query),
+                              );
+                        } else {
+                          setState(() {
+                            _isDropdownVisible = false;
+                          });
+                        }
+                      },
+                      decoration: const InputDecoration(
+                          labelText: 'Поиск товара для коробки',
+                          labelStyle: TextStyle(fontSize: 12)),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: widget.controller,
-                    validator: widget.validator,
-                    onChanged: (query) {
-                      if (query.isNotEmpty) {
-                        setState(() {
-                          _isDropdownVisible = true;
-                        });
-                        context.read<BoxBloc>().add(
-                          BoxSearchProductsEvent(query: query),
-                        );
-                      } else {
-                        setState(() {
-                          _isDropdownVisible = false;
-                        });
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      labelText: 'Поиск товара для коробки',
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: TextFormField(
+                      controller: widget.sizeController,
+                      validator: widget.validator,
+                      onChanged: (query) {
+                        // print('widget.textController.text ${widget.textController.text}.    query:${query}');
+                        if (query.isNotEmpty && widget.textController.text.isNotEmpty) {
+                          setState(() {
+                            _isDropdownVisible = true;
+                          });
+                          context.read<BoxBloc>().add(
+                                BoxSearchProductsEvent(query: widget.textController.text, size: query),
+                              );
+                        } else {
+                          setState(() {
+                            _isDropdownVisible = false;
+                          });
+                        }
+                      },
+                      decoration:  const InputDecoration(
+                          labelText: 'Поиск по размеру',
+                          labelStyle: TextStyle(fontSize: 9)),
                     ),
                   ),
-                ),
-              ],),
-
+                ],
+              ),
               if (_isDropdownVisible)
                 BlocBuilder<BoxBloc, BoxState>(
                   builder: (context, state) {
                     if (state is BoxSearchLoading) {
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(),
+                        child: CupertinoActivityIndicator(),
                       );
                     } else if (state is BoxSearchSuccess) {
                       if (state.products.isEmpty) {
@@ -122,7 +129,8 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                       }
                       return Container(
                         height: 220,
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey),
                           borderRadius: BorderRadius.circular(8.0),
@@ -137,13 +145,13 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                               final product = state.products[index];
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 12),
-                                decoration:  BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
-                                    border: Border.all(color: Colors.white)
-                                ),
+                                decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    border: Border.all(color: Colors.white)),
                                 child: ListTile(
                                   title: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       _buildRow('Имя товара: ',
                                           product?.productName ?? 'N/A'),
@@ -160,7 +168,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                       _selectedProduct = product;
                                       _isDropdownVisible = false;
                                       widget.onProductSelected(product);
-                                      widget.controller.text =
+                                      widget.textController.text =
                                           product!.productName;
                                     });
                                   },
