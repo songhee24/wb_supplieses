@@ -28,7 +28,6 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
     super.dispose();
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -62,69 +61,84 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
     double sheetHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-      child: SingleChildScrollView(
-        child: AnimatedPadding(
-          duration: const Duration(milliseconds: 150),
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, top: 80),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[600]?.withOpacity(0.5),
-                  border: Border.all(color: Colors.black26, width: 0.5),
-                ),
-                height: sheetHeight / 1.5,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      alignment: Alignment.center,
-                      child: const Text('Создание коробки',
-                          style: TextStyle(fontSize: 16)),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Form(
-                          key: _formKey,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ...List.generate(
-                                _controllers.length,
-                                (index) {
-                                  final controllers = _controllers[index];
-                                  return Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: BoxSearchInputSelector(
-                                    textController: controllers['text']!,
-                                    sizeController: controllers['size']!,
-                                    onProductSelected: (p) =>
-                                        _onProductSelected(index, p),
-                                  ),
-                                );}
-                              ),
-                            ],
-                          ),
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom, top: 80),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[600]?.withOpacity(0.5),
+                border: Border.all(color: Colors.black26, width: 0.5),
+              ),
+              height: sheetHeight / 1.5,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    alignment: Alignment.center,
+                    child: const Text('Создание коробки',
+                        style: TextStyle(fontSize: 16)),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const ScrollPhysics(),
+                      child: Form(
+                        key: _formKey,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: _controllers.length,
+                              itemBuilder:
+                                  (BuildContext context, int index) {
+                                    final controllers = _controllers[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: BoxSearchInputSelector(
+                                        textController: controllers['text']!,
+                                        sizeController: controllers['size']!,
+                                        onProductSelected: (p) =>
+                                            _onProductSelected(index, p),
+                                      ),
+                                    );
+                                  },
+                            ),
+                            // ...List.generate(_controllers.length, (index) {
+                            //   final controllers = _controllers[index];
+                            //   return Padding(
+                            //     padding: const EdgeInsets.only(bottom: 8),
+                            //     child: BoxSearchInputSelector(
+                            //       textController: controllers['text']!,
+                            //       sizeController: controllers['size']!,
+                            //       onProductSelected: (p) =>
+                            //           _onProductSelected(index, p),
+                            //     ),
+                            //   );
+                            // }),
+                          ],
                         ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _addSearchField,
-                        child: const Text('Добавить товар для этой коробки'),
-                      ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _addSearchField,
+                      child: const Text('Добавить товар для этой коробки'),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
