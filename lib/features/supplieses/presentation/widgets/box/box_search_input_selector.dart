@@ -49,10 +49,32 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
     return _selectedProduct != null
         ? Card(
             child: ListTile(
-              title: Text('Выбранный товар: ${_selectedProduct!.productName}'),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: _clearSelection,
+              titleAlignment: ListTileTitleAlignment.top,
+              title: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: [
+                  _buildRow('Имя товара: ',
+                      _selectedProduct?.productName ?? 'N/A'),
+                  _buildRow('Артикул продавца: ',
+                      _selectedProduct?.sellersArticle ?? 'N/A'),
+                  _buildRow('Артикул WB: ',
+                      _selectedProduct?.articleWB ?? 'N/A'),
+                  _buildRow(
+                      'Размер: ', _selectedProduct?.size ?? 'N/A'),
+                ],
+              ),
+              dense:true,
+              contentPadding: const EdgeInsets.only(left: 12, right: 6),
+              trailing: SizedBox(
+                width: 24,
+                height: 24,
+                child: IconButton(
+                  padding: const EdgeInsets.all(2),
+                  iconSize: 20,
+                  icon: const Icon(Icons.delete),
+                  onPressed: _clearSelection,
+                ),
               ),
             ),
           )

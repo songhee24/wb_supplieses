@@ -66,7 +66,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
         child: AnimatedPadding(
           duration: const Duration(milliseconds: 150),
           padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, top: 80),
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: BackdropFilter(
