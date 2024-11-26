@@ -3,7 +3,7 @@ import 'package:wb_supplieses/shared/entities/product_entity.dart';
 import '../entities/box_entity.dart';
 
 abstract class BoxRepository {
-  Future<List<ProductEntity?>> searchProducts(String query);
+  Future<List<ProductEntity?>> searchProducts({required String query, String? size});
 
   Future<void> addBox({required String suppliesId, required String boxNumber,
     required List<ProductEntity> productEntities});

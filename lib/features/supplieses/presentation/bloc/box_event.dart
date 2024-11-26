@@ -7,8 +7,9 @@ sealed class BoxEvent extends Equatable {
 
 class BoxSearchProductsEvent extends BoxEvent {
   final String query;
+  final String? size;
 
-  BoxSearchProductsEvent({required this.query});
+  BoxSearchProductsEvent({required this.query, this.size});
 
   @override
   List<Object> get props => [query];

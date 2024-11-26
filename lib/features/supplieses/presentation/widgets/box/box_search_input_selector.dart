@@ -56,27 +56,55 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: widget.controller,
-                validator: widget.validator,
-                onChanged: (query) {
-                  if (query.isNotEmpty) {
-                    setState(() {
-                      _isDropdownVisible = true;
-                    });
-                    context.read<BoxBloc>().add(
+              Row(children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: widget.controller,
+                    validator: widget.validator,
+                    onChanged: (query) {
+                      if (query.isNotEmpty) {
+                        setState(() {
+                          _isDropdownVisible = true;
+                        });
+                        context.read<BoxBloc>().add(
                           BoxSearchProductsEvent(query: query),
                         );
-                  } else {
-                    setState(() {
-                      _isDropdownVisible = false;
-                    });
-                  }
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Поиск товара для коробки',
+                      } else {
+                        setState(() {
+                          _isDropdownVisible = false;
+                        });
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Поиск товара для коробки',
+                    ),
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: TextFormField(
+                    controller: widget.controller,
+                    validator: widget.validator,
+                    onChanged: (query) {
+                      if (query.isNotEmpty) {
+                        setState(() {
+                          _isDropdownVisible = true;
+                        });
+                        context.read<BoxBloc>().add(
+                          BoxSearchProductsEvent(query: query),
+                        );
+                      } else {
+                        setState(() {
+                          _isDropdownVisible = false;
+                        });
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Поиск товара для коробки',
+                    ),
+                  ),
+                ),
+              ],),
+
               if (_isDropdownVisible)
                 BlocBuilder<BoxBloc, BoxState>(
                   builder: (context, state) {

@@ -7,17 +7,34 @@ class BoxDatasource {
   BoxDatasource({required this.db});
 
 
-  Future<List<ProductModel>> searchProducts(String query) async {
+  Future<List<ProductModel>> searchProducts({required String query, String? size}) async {
+    // Base query components
+    String whereClause = '''
+    sellers_article LIKE ? OR 
+    article_wb LIKE ? OR 
+    product_name LIKE ?
+  ''';
+    List<String> whereArgs = ['%$query%', '%$query%', '%$query%'];
+
+    // If size is provided, add additional conditions
+    if (size != null && size.isNotEmpty) {
+      whereClause += '''
+      AND (
+        size LIKE ? OR 
+        russian_size LIKE ?
+      )
+    ''';
+      whereArgs.addAll(['%$size%', '%$size%']);
+    }
+
+    // Execute the query
     final List<Map<String, dynamic>> maps = await db.query(
       'products',
-      where: '''
-        sellers_article LIKE ? OR 
-        article_wb LIKE ? OR 
-        product_name LIKE ?
-      ''',
-      whereArgs: ['%$query%', '%$query%', '%$query%'],
+      where: whereClause,
+      whereArgs: whereArgs,
     );
 
+    // Map results to ProductModel instances
     return maps.map((map) => ProductModel.fromMap(map)).toList();
   }
 }

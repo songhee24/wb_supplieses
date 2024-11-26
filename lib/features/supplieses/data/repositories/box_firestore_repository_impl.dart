@@ -14,9 +14,9 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
   BoxFirestoreRepositoryImpl({required this.boxDatasource});
 
   @override
-  Future<List<ProductEntity>> searchProducts(String query) async {
+  Future<List<ProductEntity>> searchProducts({required String query, String? size}) async {
     try {
-      final productModels = await boxDatasource.searchProducts(query);
+      final productModels = await boxDatasource.searchProducts(query: query, size: size);
       return productModels.map((model) => model.toEntity()).toList();
     } catch(e) {
       throw Exception('Failed to searchProducts by query: $e  -  query:$query');
