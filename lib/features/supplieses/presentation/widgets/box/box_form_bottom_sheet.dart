@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_search_input_selector.dart';
+import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 class BoxFormBottomSheet extends StatefulWidget {
-
   const BoxFormBottomSheet({super.key});
 
   @override
@@ -14,8 +14,29 @@ class BoxFormBottomSheet extends StatefulWidget {
 
 class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   final _formKey = GlobalKey<FormState>();
-  final _searchController = TextEditingController();
+  final List<TextEditingController> _controllers = [];
+  final List<ProductEntity?> _selectedProducts = [];
 
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _addSearchField() {
+    setState(() {
+      _controllers.add(TextEditingController());
+      _selectedProducts.add(null);
+    });
+  }
+
+  void _onProductSelected(int index, ProductEntity? product) {
+    setState(() {
+      _selectedProducts[index] = product;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +53,58 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
               child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.grey[600]?.withOpacity(0.5),
                   border: Border.all(color: Colors.black26, width: 0.5),
                 ),
                 height: sheetHeight / 1.5,
-                child: Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const Text('Создание коробки',
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      alignment: Alignment.center,
+                      child: const Text('Создание коробки',
                           style: TextStyle(fontSize: 16)),
-                      BoxSearchInputSelector(controller: _searchController,),
-                    ],
-                  ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Form(
+                          key: _formKey,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ...List.generate(
+                                _controllers.length,
+                                (index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: BoxSearchInputSelector(
+                                    controller: _controllers[index],
+                                    onSearch: (query) {
+                                      // Trigger search logic here
+                                    },
+                                    onProductSelected: (p) =>
+                                        _onProductSelected(index, p),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _addSearchField,
+                        child: const Text('Добавить товар для этой коробки'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
