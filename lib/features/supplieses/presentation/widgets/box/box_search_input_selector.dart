@@ -118,7 +118,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                     if (state is BoxSearchLoading) {
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: CupertinoActivityIndicator(),
+                        child: Center(child: CupertinoActivityIndicator()),
                       );
                     } else if (state is BoxSearchSuccess) {
                       if (state.products.isEmpty) {
@@ -128,6 +128,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                         );
                       }
                       return Container(
+                        margin: const EdgeInsets.only(top: 8),
                         height: 220,
                         padding: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 12),
