@@ -1,6 +1,3 @@
-import 'package:wb_supplieses/shared/entities/product_entity.dart';
-
-import '../entities/box_entity.dart';
 import '../entities/supplies_entity.dart';
 
 abstract class SuppliesRepository {

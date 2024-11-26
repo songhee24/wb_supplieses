@@ -1,14 +1,14 @@
-import 'package:equatable/equatable.dart';
+part of 'box_bloc.dart';
 
 sealed class BoxEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class BoxSearchProducts extends BoxEvent {
+class BoxSearchProductsEvent extends BoxEvent {
   final String query;
 
-  BoxSearchProducts({required this.query});
+  BoxSearchProductsEvent({required this.query});
 
   @override
   List<Object> get props => [query];

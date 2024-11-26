@@ -1,19 +1,30 @@
-import 'package:equatable/equatable.dart';
-import 'package:wb_supplieses/shared/entities/product_entity.dart';
+part of 'box_bloc.dart';
 
-enum BoxProductSearchStatus { initial, loading, success, successEdit, failure }
-
-final class BoxState extends Equatable {
-  final BoxProductSearchStatus boxProductSearchStatus;
-  final String boxNumber;
-  final List<ProductEntity> productEntities;
-
-  const BoxState({
-    required this.boxProductSearchStatus,
-    required this.boxNumber,
-    this.productEntities = const <ProductEntity>[],
-  });
+abstract class BoxState extends Equatable {
+  const BoxState();
 
   @override
-  List<Object?> get props => [boxProductSearchStatus, productEntities];
+  List<Object?> get props => [];
+}
+
+class BoxInitial extends BoxState {}
+
+class BoxSearchLoading extends BoxState {}
+
+class BoxSearchSuccess extends BoxState {
+  final List<ProductEntity?> products;
+
+  const BoxSearchSuccess(this.products);
+
+  @override
+  List<Object?> get props => [products];
+}
+
+class BoxSearchError extends BoxState {
+  final String message;
+
+  const BoxSearchError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

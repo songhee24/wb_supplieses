@@ -23,12 +23,18 @@ Future<void> main() async {
   final productDatasource = ProductDatasource(db: localDatabaseDatasource);
   final productRepositoryImpl = ProductRepositoryImpl(productDatasource: productDatasource);
 
+  final boxDatasource = BoxDatasource(db: localDatabaseDatasource);
+  final boxFirestoreRepositoryImpl = BoxFirestoreRepositoryImpl(boxDatasource: boxDatasource);
+
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (_) => SuppliesTabIndexCubit(),
     ),
     BlocProvider(
       create: (_) => SuppliesBloc(suppliesRepository),
+    ),
+    BlocProvider(
+      create: (_) => BoxBloc(boxRepository: boxFirestoreRepositoryImpl),
     ),
     BlocProvider(create: (_) => ProductBloc(repository: productRepositoryImpl))
   ], child: const App()));
