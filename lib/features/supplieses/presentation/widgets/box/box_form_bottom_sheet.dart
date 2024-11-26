@@ -2,9 +2,20 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_search_input_selector.dart';
 
-class BoxFormBottomSheet extends StatelessWidget {
+class BoxFormBottomSheet extends StatefulWidget {
+
   const BoxFormBottomSheet({super.key});
+
+  @override
+  State<BoxFormBottomSheet> createState() => _BoxFormBottomSheetState();
+}
+
+class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _searchController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +25,8 @@ class BoxFormBottomSheet extends StatelessWidget {
       child: SingleChildScrollView(
         child: AnimatedPadding(
           duration: const Duration(milliseconds: 150),
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: BackdropFilter(
@@ -26,24 +38,15 @@ class BoxFormBottomSheet extends StatelessWidget {
                 ),
                 height: sheetHeight / 1.5,
                 child: Form(
+                  key: _formKey,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      const Text('Создание коробки', style: TextStyle(fontSize: 16)),
-                      Flexible(
-                        child: TextFormField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.white),
-                            labelText: 'Кол-во',
-                          ),
-                        ),
-                      ),
+                      const Text('Создание коробки',
+                          style: TextStyle(fontSize: 16)),
+                      BoxSearchInputSelector(controller: _searchController,),
                     ],
                   ),
                 ),

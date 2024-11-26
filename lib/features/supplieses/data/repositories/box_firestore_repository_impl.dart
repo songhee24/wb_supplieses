@@ -4,10 +4,24 @@ import 'package:wb_supplieses/features/supplieses/domain/repositories/box_reposi
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 import 'package:wb_supplieses/shared/models/product_model.dart';
 
+import '../datasources/box_datasource.dart';
 import '../models/box_model.dart';
 
 class BoxFirestoreRepositoryImpl implements BoxRepository {
+  final BoxDatasource boxDatasource;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  BoxFirestoreRepositoryImpl({required this.boxDatasource});
+
+  @override
+  Future<List<ProductEntity>> searchProducts(String query) async {
+    try {
+      final productModels = await boxDatasource.searchProducts(query);
+      return productModels.map((model) => model.toEntity()).toList();
+    } catch(e) {
+      throw Exception('Failed to searchProducts by query: $e  -  query:$query');
+    }
+  }
 
   @override
   Future<void> addBox({required String suppliesId, required String boxNumber,
@@ -112,11 +126,5 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
     } catch(e) {
       throw Exception('Failed to get supply boxes: $e');
     }
-  }
-
-  @override
-  Future<List<ProductEntity>> searchProducts(String query) {
-    // TODO: implement searchProducts
-    throw UnimplementedError();
   }
 }
