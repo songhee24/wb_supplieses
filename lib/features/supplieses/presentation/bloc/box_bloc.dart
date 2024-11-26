@@ -24,7 +24,9 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     // Cancel any ongoing debounce
     _debounce?.cancel();
 
-    // Start debounce timer
+    // Wrap the debounce logic in a Completer to ensure the handler does not complete prematurely
+    final completer = Completer<void>();
+
     _debounce = Timer(const Duration(milliseconds: 300), () async {
       emit(BoxSearchLoading());
 
@@ -34,7 +36,12 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       } catch (error) {
         emit(BoxSearchError(error.toString()));
       }
+
+      completer.complete(); // Signal the completion of the debounce logic
     });
+
+    // Wait for the debounce logic to complete before exiting the handler
+    await completer.future;
   }
 
   @override

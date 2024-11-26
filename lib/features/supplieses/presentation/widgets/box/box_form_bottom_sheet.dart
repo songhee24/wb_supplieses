@@ -83,9 +83,6 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                   padding: const EdgeInsets.only(bottom: 8),
                                   child: BoxSearchInputSelector(
                                     controller: _controllers[index],
-                                    onSearch: (query) {
-                                      // Trigger search logic here
-                                    },
                                     onProductSelected: (p) =>
                                         _onProductSelected(index, p),
                                   ),
