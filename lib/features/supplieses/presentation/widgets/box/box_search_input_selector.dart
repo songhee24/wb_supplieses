@@ -204,7 +204,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                           ),
                         ),
                       );
-                    } else if (state is BoxSearchError) {
+                    } else if (state is BoxError) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(

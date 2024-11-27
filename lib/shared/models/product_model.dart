@@ -13,6 +13,7 @@ class ProductModel extends ProductEntity {
     required super.barcode,
     required super.size,
     required super.russianSize,
+    super.count
   });
 
   // Convert ProductModel to ProductEntity if needed
@@ -29,6 +30,7 @@ class ProductModel extends ProductEntity {
       barcode: barcode,
       size: size,
       russianSize: russianSize,
+      count: count
     );
   }
 
@@ -44,6 +46,7 @@ class ProductModel extends ProductEntity {
       barcode: row[6]?.toString() ?? '',
       size: row[7]?.toString() ?? '',
       russianSize: row[8]?.toString() ?? '',
+      count: 0
     );
   }
 
@@ -60,6 +63,7 @@ class ProductModel extends ProductEntity {
       'barcode': barcode,
       'size': size,
       'russian_size': russianSize,
+      'count': count
     };
   }
 
@@ -76,6 +80,7 @@ class ProductModel extends ProductEntity {
       barcode: map['barcode'],
       size: map['size'],
       russianSize: map['russian_size'],
+      count: map['count']
     );
   }
 }

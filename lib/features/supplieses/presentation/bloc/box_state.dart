@@ -6,10 +6,13 @@ abstract class BoxState extends Equatable {
   @override
   List<Object?> get props => [];
 }
+class BoxCreateSuccess extends BoxState {}
 
 class BoxInitial extends BoxState {}
 
 class BoxSearchLoading extends BoxState {}
+
+class BoxManageLoading extends BoxState {}
 
 class BoxSearchSuccess extends BoxState {
   final List<ProductEntity?> products;
@@ -20,10 +23,10 @@ class BoxSearchSuccess extends BoxState {
   List<Object?> get props => [products];
 }
 
-class BoxSearchError extends BoxState {
+class BoxError extends BoxState {
   final String message;
 
-  const BoxSearchError(this.message);
+  const BoxError(this.message);
 
   @override
   List<Object?> get props => [message];

@@ -2,11 +2,11 @@ import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dar
 import 'package:wb_supplieses/shared/models/product_model.dart';
 
 class BoxModel extends BoxEntity {
-  final List<ProductModel?> productModels;
+  final List<ProductModel>? productModels;
 
   const BoxModel(
-      {required super.id,
-      required this.productModels,
+      {super.id,
+        this.productModels = const <ProductModel>[],
       super.suppliesId,
       required super.boxNumber})
       : super(productEntities: productModels);
@@ -15,11 +15,11 @@ class BoxModel extends BoxEntity {
     return {
       'id': id,
       'productEntity':
-          productModels.map((product) => product?.toMap()).toList(),
+          productModels?.map((product) => product.toMap()).toList(),
     };
   }
 
-  BoxModel copyWith({String? id, List<ProductModel?>? productModels}) {
+  BoxModel copyWith({String? id, List<ProductModel>? productModels}) {
     return BoxModel(
         id: id ?? this.id,
         productModels: productModels ?? this.productModels,

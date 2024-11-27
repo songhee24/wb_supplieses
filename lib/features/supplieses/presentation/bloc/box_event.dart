@@ -14,3 +14,12 @@ class BoxSearchProductsEvent extends BoxEvent {
   @override
   List<Object> get props => [query];
 }
+
+class BoxCreateEvent extends BoxEvent {
+  final BoxEntity boxEntity;
+
+  BoxCreateEvent({required this.boxEntity});
+
+  @override
+  List<Object?> get props => [boxEntity];
+}

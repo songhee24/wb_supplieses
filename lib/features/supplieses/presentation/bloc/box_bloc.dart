@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 import '../../domain/repositories/box_repository.dart';
@@ -15,6 +16,17 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
 
   BoxBloc({required this.boxRepository}) : super(BoxInitial()) {
     on<BoxSearchProductsEvent>(_onSearchProducts);
+    on<BoxCreateEvent>(_onBoxCreate);
+  }
+
+  Future<void> _onBoxCreate(BoxCreateEvent event, Emitter<BoxState> emit) async {
+    try{
+      emit(BoxManageLoading());
+      await boxRepository.createBox(event.boxEntity);
+      emit(BoxCreateSuccess());
+    } catch(error) {
+      emit(BoxError(error.toString()));
+    }
   }
 
   Future<void> _onSearchProducts(
@@ -34,7 +46,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         final results = await boxRepository.searchProducts(query:event.query, size: event.size);
         emit(BoxSearchSuccess(results));
       } catch (error) {
-        emit(BoxSearchError(error.toString()));
+        emit(BoxError(error.toString()));
       }
 
       completer.complete(); // Signal the completion of the debounce logic

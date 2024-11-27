@@ -12,6 +12,7 @@ class ProductEntity extends Equatable {
   final String barcode;
   final String size;
   final String russianSize;
+  final int count;
 
   const ProductEntity({
     this.id,
@@ -25,6 +26,7 @@ class ProductEntity extends Equatable {
     required this.barcode,
     required this.size,
     required this.russianSize,
+    this.count = 0
   });
 
   @override

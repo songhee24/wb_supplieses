@@ -14,20 +14,23 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
   BoxFirestoreRepositoryImpl({required this.boxDatasource});
 
   @override
-  Future<List<ProductEntity>> searchProducts({required String query, String? size}) async {
+  Future<List<ProductEntity>> searchProducts(
+      {required String query, String? size}) async {
     try {
-      final productModels = await boxDatasource.searchProducts(query: query, size: size);
+      final productModels =
+          await boxDatasource.searchProducts(query: query, size: size);
       return productModels.map((model) => model.toEntity()).toList();
-    } catch(e) {
+    } catch (e) {
       throw Exception('Failed to searchProducts by query: $e  -  query:$query');
     }
   }
 
   @override
-  Future<void> addBox({required String suppliesId, required String boxNumber,
-    required List<ProductEntity> productEntities}) async {
+  Future<void> addBox(
+      {required String suppliesId,
+      required String boxNumber,
+      required List<ProductEntity> productEntities}) async {
     try {
-
       final initialBox = BoxModel(
         id: null, // ID will be assigned after saving
         suppliesId: suppliesId,
@@ -35,7 +38,8 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
         productModels: [],
       );
 
-      final boxDocRef = await _firestore.collection('boxes').add(initialBox.toMap());
+      final boxDocRef =
+          await _firestore.collection('boxes').add(initialBox.toMap());
       final boxId = boxDocRef.id;
 
       final boxWithId = initialBox.copyWith(id: boxId);
@@ -121,10 +125,47 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
         }).toEntity();
       }).toList());
 
-
       return boxes;
-    } catch(e) {
+    } catch (e) {
       throw Exception('Failed to get supply boxes: $e');
+    }
+  }
+
+  @override
+  Future<BoxEntity>? createBox(BoxEntity box) async {
+    try {
+      // Transform BoxEntity to BoxModel, including ProductEntities to ProductModels
+      final boxModel = BoxModel(
+        suppliesId: box.suppliesId,
+        boxNumber: box.boxNumber,
+        productModels: box.productEntities?.map((productEntity) {
+          return ProductModel(
+            groupId: productEntity.groupId,
+            sellersArticle: productEntity.sellersArticle,
+            articleWB: productEntity.articleWB,
+            productName: productEntity.productName,
+            category: productEntity.category,
+            brand: productEntity.brand,
+            barcode: productEntity.barcode,
+            size: productEntity.size,
+            russianSize: productEntity.russianSize,
+            count: productEntity.count
+          );
+        }).toList(),
+      );
+
+      // Save the box using the data source
+      final boxId = await boxDatasource.insertBox(boxModel);
+
+      // Return the created BoxEntity
+      return BoxEntity(
+        id: boxId.toString(),
+        boxNumber: box.boxNumber,
+        suppliesId: box.suppliesId,
+        productEntities: box.productEntities,
+      );
+    } catch (e) {
+      throw Exception('Failed to create box: $e');
     }
   }
 }

@@ -53,7 +53,7 @@ class LocalDatabaseDatasource {
     // Create the Boxes table
     await db.execute('''
     CREATE TABLE box (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       supplies_id TEXT NOT NULL,
       box_number INTEGER NOT NULL
     )
@@ -73,6 +73,7 @@ class LocalDatabaseDatasource {
       barcode TEXT,
       size TEXT,
       russian_size TEXT,
+      count INTEGER,
       FOREIGN KEY (box_id) REFERENCES Boxes (id) ON DELETE CASCADE
     )
     ''');
