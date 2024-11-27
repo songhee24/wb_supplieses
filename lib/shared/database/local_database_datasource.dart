@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -46,10 +44,28 @@ class LocalDatabaseDatasource {
 
     // Create the Boxes table
     await db.execute('''
-    CREATE TABLE Boxes (
+    CREATE TABLE boxes (
       id TEXT PRIMARY KEY,
       supplies_id TEXT NOT NULL,
       box_number INTEGER NOT NULL
+    )
+    ''');
+
+    // Create the products inside box table
+    await db.execute('''
+    CREATE TABLE box_products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      box_id TEXT,
+      group_id TEXT,
+      sellers_article TEXT,
+      article_wb TEXT,
+      product_name TEXT,
+      category TEXT,
+      brand TEXT,
+      barcode TEXT,
+      size TEXT,
+      russian_size TEXT,
+      FOREIGN KEY (box_id) REFERENCES Boxes (id) ON DELETE CASCADE
     )
     ''');
 
