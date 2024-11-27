@@ -50,8 +50,8 @@ class ProductModel extends ProductEntity {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'boxId': boxId,
       'group_id': groupId == null ? '' : groupId.toString(),
+      'box_id': boxId,
       'sellers_article': sellersArticle,
       'article_wb': articleWB,
       'product_name': productName,

@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../database.dart';
 import '../../../../shared/entities/product_entity.dart';
 
-
 class DatabasePage extends StatefulWidget {
   const DatabasePage({super.key});
 
@@ -239,7 +238,8 @@ class _DatabasePageState extends State<DatabasePage> {
                   .map((attr) => DataCell(
                         SingleChildScrollView(
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 200, maxHeight: 80),
+                            constraints: const BoxConstraints(
+                                maxWidth: 200, maxHeight: 80),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Text(
@@ -329,24 +329,23 @@ class _DatabasePageState extends State<DatabasePage> {
   Widget build(BuildContext context) {
     return BlocListener<ProductBloc, ProductState>(
       listener: (context, state) {
-        if (state is ProductLoadingState) {
-          // showDialog(
-          //     context: context,
-          //     builder: (context) => AlertDialog(
-          //         contentPadding: EdgeInsets.zero,
-          //         backgroundColor: Colors.transparent,
-          //         insetPadding: const EdgeInsets.symmetric(horizontal: 175),
-          //         content: Container(
-          //             decoration: BoxDecoration(
-          //                 color: Colors.black.withOpacity(.6),
-          //                 borderRadius:
-          //                     const BorderRadius.all(Radius.circular(12.0))),
-          //             width: 40,
-          //             height: 40,
-          //             child: const CupertinoActivityIndicator())));
-        }
-
-        if (state is ProductLoadedState) {
+        if (state is ProductErrorState) {
+          print(state.errorMessage);
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    contentPadding: EdgeInsets.zero,
+                    backgroundColor: Colors.transparent,
+                    insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    content: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(.6),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12.0))),
+                      child: Text(state.errorMessage, style: const TextStyle(color: Colors.redAccent),),
+                    ),
+                  ));
+        } else if (state is ProductLoadedState) {
           // Navigator.of(context, rootNavigator: true).pop('dialog');
           setState(() {
             _excelData = state.products;
@@ -424,7 +423,10 @@ class _DatabasePageState extends State<DatabasePage> {
                 ],
               ),
             ),
-            Padding(padding: const EdgeInsets.only(right: 16, left: 5),child: _buildPagination(),),
+            Padding(
+              padding: const EdgeInsets.only(right: 16, left: 5),
+              child: _buildPagination(),
+            ),
             Expanded(
               child: _isPlatformFilePickupLoading
                   ? const Center(child: CupertinoActivityIndicator())

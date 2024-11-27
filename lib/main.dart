@@ -20,6 +20,7 @@ Future<void> main() async {
   final suppliesRepository = SuppliesFirestoreRepositoryImpl();
 
   final localDatabaseDatasource = await LocalDatabaseDatasource.instance.database;
+  print('localDatabaseDatasource $localDatabaseDatasource');
   final productDatasource = ProductDatasource(db: localDatabaseDatasource);
   final productRepositoryImpl = ProductRepositoryImpl(productDatasource: productDatasource);
 

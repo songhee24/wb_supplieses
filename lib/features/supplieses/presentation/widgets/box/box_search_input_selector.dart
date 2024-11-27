@@ -51,20 +51,18 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
             child: ListTile(
               titleAlignment: ListTileTitleAlignment.top,
               title: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildRow('Имя товара: ',
-                      _selectedProduct?.productName ?? 'N/A'),
+                  _buildRow(
+                      'Имя товара: ', _selectedProduct?.productName ?? 'N/A'),
                   _buildRow('Артикул продавца: ',
                       _selectedProduct?.sellersArticle ?? 'N/A'),
-                  _buildRow('Артикул WB: ',
-                      _selectedProduct?.articleWB ?? 'N/A'),
                   _buildRow(
-                      'Размер: ', _selectedProduct?.size ?? 'N/A'),
+                      'Артикул WB: ', _selectedProduct?.articleWB ?? 'N/A'),
+                  _buildRow('Размер: ', _selectedProduct?.size ?? 'N/A'),
                 ],
               ),
-              dense:true,
+              dense: true,
               contentPadding: const EdgeInsets.only(left: 12, right: 6),
               trailing: SizedBox(
                 width: 24,
@@ -114,12 +112,15 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                       validator: widget.validator,
                       onChanged: (query) {
                         // print('widget.textController.text ${widget.textController.text}.    query:${query}');
-                        if (query.isNotEmpty && widget.textController.text.isNotEmpty) {
+                        if (query.isNotEmpty &&
+                            widget.textController.text.isNotEmpty) {
                           setState(() {
                             _isDropdownVisible = true;
                           });
                           context.read<BoxBloc>().add(
-                                BoxSearchProductsEvent(query: widget.textController.text, size: query),
+                                BoxSearchProductsEvent(
+                                    query: widget.textController.text,
+                                    size: query),
                               );
                         } else {
                           setState(() {
@@ -127,7 +128,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                           });
                         }
                       },
-                      decoration:  const InputDecoration(
+                      decoration: const InputDecoration(
                           labelText: 'Поиск по размеру',
                           labelStyle: TextStyle(fontSize: 9)),
                     ),
@@ -169,8 +170,10 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 12),
                                 decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.5),
-                                    border: Border.all(color: Colors.white)),
+                                  color: Colors.black.withOpacity(0.5),
+                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                  // border: Border.all(color: Colors.white),
+                                ),
                                 child: ListTile(
                                   title: Column(
                                     crossAxisAlignment:

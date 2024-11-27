@@ -24,7 +24,7 @@ class BoxDatasource {
 
     // Execute the query
     final List<Map<String, dynamic>> maps = await db.query(
-      'products',
+      'exel_products',
       where: whereClause,
       whereArgs: whereArgs,
     );

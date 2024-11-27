@@ -14,7 +14,6 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<List<ProductEntity>> getAllProducts() async {
     try {
       final products = await productDatasource.getAllProducts();
-      print('products $products');
       return products
           .map<ProductEntity>((p) => ProductEntity(
               groupId: p.groupId,
