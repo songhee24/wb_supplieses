@@ -16,6 +16,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final List<Map<String, TextEditingController>> _controllers = [];
   final List<ProductEntity?> _selectedProducts = [];
+  final TextEditingController _boxNumberController = TextEditingController(text: '1');
 
   @override
   void dispose() {
@@ -25,6 +26,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
         controller.dispose();
       }
     }
+    _boxNumberController.dispose();
     super.dispose();
   }
 
@@ -80,10 +82,47 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8.0),
-                    alignment: Alignment.center,
-                    child: const Text('Создание коробки',
-                        style: TextStyle(fontSize: 16)),
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          const Text(
+                            'Создание коробки',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                const Text('Короб №'),
+                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: 31,
+                                  height: 30,
+                                  child: TextFormField(
+                                    controller: _boxNumberController,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    cursorHeight: 10,
+                                    decoration: const InputDecoration(
+                                      contentPadding: EdgeInsets.only(bottom: 5),
+                                      border: UnderlineInputBorder(),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.grey),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ])
+                        ]),
                   ),
                   Expanded(
                     child: SingleChildScrollView(
@@ -99,19 +138,18 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: _controllers.length,
-                              itemBuilder:
-                                  (BuildContext context, int index) {
-                                    final controllers = _controllers[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                      child: BoxSearchInputSelector(
-                                        textController: controllers['text']!,
-                                        sizeController: controllers['size']!,
-                                        onProductSelected: (p) =>
-                                            _onProductSelected(index, p),
-                                      ),
-                                    );
-                                  },
+                              itemBuilder: (BuildContext context, int index) {
+                                final controllers = _controllers[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: BoxSearchInputSelector(
+                                    textController: controllers['text']!,
+                                    sizeController: controllers['size']!,
+                                    onProductSelected: (p) =>
+                                        _onProductSelected(index, p),
+                                  ),
+                                );
+                              },
                             ),
                             // ...List.generate(_controllers.length, (index) {
                             //   final controllers = _controllers[index];

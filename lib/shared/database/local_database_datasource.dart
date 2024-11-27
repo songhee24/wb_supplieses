@@ -7,8 +7,16 @@ class LocalDatabaseDatasource {
 
   LocalDatabaseDatasource._init();
 
+  Future<void> _deleteDatabase(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
+
+    await deleteDatabase(path); // Deletes the database file
+  }
+
   Future<Database> get database async {
     if (_database != null) return _database!;
+    await _deleteDatabase('app.db');
     _database = await _initDB('app.db');
     return _database!;
   }
@@ -44,7 +52,7 @@ class LocalDatabaseDatasource {
 
     // Create the Boxes table
     await db.execute('''
-    CREATE TABLE boxes (
+    CREATE TABLE box (
       id TEXT PRIMARY KEY,
       supplies_id TEXT NOT NULL,
       box_number INTEGER NOT NULL
