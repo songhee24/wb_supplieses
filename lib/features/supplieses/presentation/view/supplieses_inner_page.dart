@@ -2,13 +2,30 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
+import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 import '../../domain/entities/supplies_entity.dart';
 
-class SuppliesesInnerPage extends StatelessWidget {
+class SuppliesesInnerPage extends StatefulWidget {
   final SuppliesEntity? suppliesEntity;
 
   const SuppliesesInnerPage({super.key, this.suppliesEntity});
+
+  @override
+  State<SuppliesesInnerPage> createState() => _SuppliesesInnerPageState();
+}
+
+class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
+  List<BoxEntity> _boxEntities = [];
+
+  @override
+  void initState() {
+    context.read<BoxBloc>().add(
+        (BoxesBySuppliesIdEvent(suppliesId: '${widget.suppliesEntity!.id}')));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,15 +77,16 @@ class SuppliesesInnerPage extends StatelessWidget {
                                     alignment: Alignment.bottomCenter,
                                     child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
-                                        child:
-                                            Text(suppliesEntity?.name ?? ''))),
+                                        child: Text(
+                                            widget.suppliesEntity?.name ??
+                                                ''))),
                               )),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  const Text('0',
-                                      style: TextStyle(fontSize: 16)),
+                                   Text('${_boxEntities.length}',
+                                      style: const TextStyle(fontSize: 16)),
                                   const SizedBox(width: 4),
                                   Image.asset(
                                     'lib/assets/box.png',
@@ -87,42 +105,56 @@ class SuppliesesInnerPage extends StatelessWidget {
               ),
             ),
           ),
-          const SliverPadding(
-            padding: EdgeInsets.only(
-                bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: Card(child: Text('Box')),
+          BlocListener<BoxBloc, BoxState>(
+            listener: (content, state) {
+              if (state is BoxError) {
+                print(state.message);
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          contentPadding: EdgeInsets.zero,
+                          backgroundColor: Colors.transparent,
+                          insetPadding:
+                              const EdgeInsets.symmetric(horizontal: 12),
+                          content: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(.6),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(12.0))),
+                            child: Text(
+                              state.message,
+                              style: const TextStyle(color: Colors.redAccent),
+                            ),
+                          ),
+                        ));
+              } else if (state is BoxesBySuppliesIdSuccess) {
+                setState(() {
+                  _boxEntities = state.boxEntities ?? [];
+                });
+              }
+            },
+            child: SliverPadding(
+              padding: const EdgeInsets.only(
+                  bottom: kBottomNavigationBarHeight + 100,
+                  left: 16,
+                  right: 16),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    if(_boxEntities.isEmpty) {
+                      return const Center(child: Text('Короб нет'),);
+                    }
+
+                    final box = _boxEntities[index];
+                    return ListTile(
+                      title: Text('${box.boxNumber} кол-во товаров: ${box.productEntities?.length ?? 0}'),
+                    );
+                  },
+                  childCount: _boxEntities.length,
+                ),
               ),
             ),
           ),
-          const SliverPadding(
-            padding: EdgeInsets.only(
-                bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: Card(child: Text('Box')),
-              ),
-            ),
-          ),
-          const SliverPadding(
-            padding: EdgeInsets.only(
-                bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: Card(child: Text('Box')),
-              ),
-            ),
-          ),
-          const SliverPadding(
-            padding: EdgeInsets.only(
-                bottom: kBottomNavigationBarHeight + 130, left: 16, right: 16),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: Card(child: Text('Box')),
-              ),
-            ),
-          )
         ],
       ),
     );

@@ -2,11 +2,16 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_search_input_selector.dart';
+import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 class BoxFormBottomSheet extends StatefulWidget {
-  const BoxFormBottomSheet({super.key});
+  final String suppliesId;
+
+  const BoxFormBottomSheet({super.key, required this.suppliesId});
 
   @override
   State<BoxFormBottomSheet> createState() => _BoxFormBottomSheetState();
@@ -16,7 +21,8 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final List<Map<String, TextEditingController>> _controllers = [];
   final List<ProductEntity?> _selectedProducts = [];
-  final TextEditingController _boxNumberController = TextEditingController(text: '1');
+  final TextEditingController _boxNumberController =
+      TextEditingController(text: '1');
 
   @override
   void dispose() {
@@ -109,7 +115,8 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                     keyboardType: TextInputType.number,
                                     cursorHeight: 10,
                                     decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.only(bottom: 5),
+                                      contentPadding:
+                                          EdgeInsets.only(bottom: 5),
                                       border: UnderlineInputBorder(),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide:
@@ -144,11 +151,27 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 8),
                                   child: BoxSearchInputSelector(
-                                    textController: controllers['text']!,
-                                    sizeController: controllers['size']!,
-                                    onProductSelected: (p) =>
-                                        _onProductSelected(index, p),
-                                  ),
+                                      textController: controllers['text']!,
+                                      sizeController: controllers['size']!,
+                                      onProductSelected: (p) {
+                                        _onProductSelected(index, p);
+                                        BoxEntity boxEntity = BoxEntity(
+                                            boxNumber:
+                                                _boxNumberController.text,
+                                            suppliesId: widget.suppliesId,
+                                            productEntities: _selectedProducts
+                                                .where((el) =>
+                                                    el !=
+                                                    null)
+                                                .cast<
+                                                    ProductEntity>()
+                                                .toList());
+
+                                        context.read<BoxBloc>().add(
+                                              BoxCreateEvent(
+                                                  boxEntity: boxEntity),
+                                            );
+                                      }),
                                 );
                               },
                             ),

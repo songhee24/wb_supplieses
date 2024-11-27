@@ -8,16 +8,31 @@ class BoxDatasource {
   BoxDatasource({required this.db});
 
   Future<int> insertBox(BoxModel box) async {
+    // Start a transaction to ensure atomic operations
     return await db.transaction((txn) async {
-      // Insert the box and get its generated ID
-      final boxId = await txn.insert('box', {
-        'supplies_id': box.suppliesId,
-        'box_number': box.boxNumber,
-      });
+      // If a `boxId` exists, clear previous products for this box
+      if (box.id != null) {
+        await txn.delete(
+          'box_products',
+          where: 'box_id = ?',
+          whereArgs: [box.id],
+        );
+      }
 
-      // Insert each product associated with the box
-      if (box.productEntities != null && box.productEntities!.isNotEmpty) {
-        for (var product in box.productEntities!) {
+      // Insert the Box if it doesn't already exist
+      int boxId;
+      if (box.id == null) {
+        boxId = await txn.insert('box', {
+          'supplies_id': box.suppliesId,
+          'box_number': int.parse(box.boxNumber),
+        });
+      } else {
+        boxId = int.parse(box.id!);
+      }
+
+      // Insert the associated product models into the `box_products` table
+      if (box.productModels != null && box.productModels!.isNotEmpty) {
+        for (var product in box.productModels!) {
           await txn.insert('box_products', {
             'box_id': boxId,
             'group_id': product.groupId,
@@ -33,9 +48,39 @@ class BoxDatasource {
         }
       }
 
-      return boxId; // Return the newly created box's ID
+      return boxId;
     });
   }
+
+  // Future<int> insertBox(BoxModel box) async {
+  //   return await db.transaction((txn) async {
+  //     // Insert the box and get its generated ID
+  //     final boxId = await txn.insert('box', {
+  //       'supplies_id': box.suppliesId,
+  //       'box_number': box.boxNumber,
+  //     });
+  //
+  //     // Insert each product associated with the box
+  //     if (box.productEntities != null && box.productEntities!.isNotEmpty) {
+  //       for (var product in box.productEntities!) {
+  //         await txn.insert('box_products', {
+  //           'box_id': boxId,
+  //           'group_id': product.groupId,
+  //           'sellers_article': product.sellersArticle,
+  //           'article_wb': product.articleWB,
+  //           'product_name': product.productName,
+  //           'category': product.category,
+  //           'brand': product.brand,
+  //           'barcode': product.barcode,
+  //           'size': product.size,
+  //           'russian_size': product.russianSize,
+  //         });
+  //       }
+  //     }
+  //
+  //     return boxId; // Return the newly created box's ID
+  //   });
+  // }
 
   Future<List<ProductModel>> searchProducts(
       {required String query, String? size}) async {
@@ -67,7 +112,7 @@ class BoxDatasource {
   Future<List<BoxModel>> getBoxesBySuppliesId(String suppliesId) async {
     // Fetch all boxes for the given supplies_id
     final boxRows = await db.query(
-      'Boxes',
+      'box',
       where: 'supplies_id = ?',
       whereArgs: [suppliesId],
     );
@@ -82,7 +127,7 @@ class BoxDatasource {
 
       // Fetch associated products for the current box
       final productRows = await db.query(
-        'Products',
+        'exel_products',
         where: 'box_id = ?',
         whereArgs: [boxId],
       );

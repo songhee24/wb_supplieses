@@ -28,15 +28,20 @@ class LayoutScaffold extends StatelessWidget {
       backgroundColor: Colors.transparent,
       // Add FloatingActionButton
       floatingActionButton: navigationShell.currentIndex == 0
-      // TODO refactor BlocBuilder use navigationShell or GoRouterState
+          // TODO refactor BlocBuilder use navigationShell or GoRouterState
           ? BlocBuilder<SuppliesTabIndexCubit, int>(
               builder: (context, selectedTabIndex) {
                 return FloatingActionButton(
                   onPressed: () {
                     if (suppliesId != null) {
-                      showModalBottomSheet(isScrollControlled: true,context: context, builder: (BuildContext context) {
-                        return const BoxFormBottomSheet();
-                      });
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return BoxFormBottomSheet(
+                              suppliesId: suppliesId,
+                            );
+                          });
                     } else if (selectedTabIndex == 0) {
                       showModalBottomSheet(
                           isScrollControlled: true,
@@ -44,9 +49,7 @@ class LayoutScaffold extends StatelessWidget {
                           builder: (BuildContext context) {
                             return const SuppliesFormBottomSheet();
                           });
-                    } else if (selectedTabIndex == 1) {
-
-                    }
+                    } else if (selectedTabIndex == 1) {}
                   },
                   child: const Icon(Icons.add),
                 );

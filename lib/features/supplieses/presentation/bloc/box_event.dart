@@ -15,10 +15,16 @@ class BoxSearchProductsEvent extends BoxEvent {
   List<Object> get props => [query];
 }
 
-class BoxCreateEvent extends BoxEvent {
-  final BoxEntity boxEntity;
+class BoxesBySuppliesIdEvent extends BoxEvent {
+  final String suppliesId;
 
-  BoxCreateEvent({required this.boxEntity});
+  BoxesBySuppliesIdEvent({required this.suppliesId});
+}
+
+class BoxCreateEvent extends BoxEvent {
+  final BoxEntity? boxEntity;
+
+  BoxCreateEvent({this.boxEntity});
 
   @override
   List<Object?> get props => [boxEntity];

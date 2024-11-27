@@ -220,7 +220,6 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                               _productNumberController.text.isEmpty ? '0' : _productNumberController.text,
                                             ),
                                           );
-
                                           _selectedProduct = selectedProductModel;
                                           _isDropdownVisible = false;
                                           widget.onProductSelected(product);

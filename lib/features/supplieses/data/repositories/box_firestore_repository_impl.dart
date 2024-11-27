@@ -168,4 +168,13 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
       throw Exception('Failed to create box: $e');
     }
   }
+
+  @override
+  Future<List<BoxEntity>> getBoxesBySuppliesId(String suppliesId) async {
+    try{
+      return await boxDatasource.getBoxesBySuppliesId(suppliesId);
+    } catch(e) {
+      throw Exception('Failed to get boxes by suppliesId: $e');
+    }
+  }
 }
