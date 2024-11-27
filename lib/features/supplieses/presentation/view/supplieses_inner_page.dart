@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,6 @@ class SuppliesesInnerPage extends StatefulWidget {
 }
 
 class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
-  List<BoxEntity> _boxEntities = [];
 
   @override
   void initState() {
@@ -85,8 +85,20 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                   Text('${_boxEntities.length}',
-                                      style: const TextStyle(fontSize: 16)),
+                                  BlocBuilder<BoxBloc, BoxState>(
+                                    builder: (context, state) {
+                                      if (state is BoxesBySuppliesIdSuccess) {
+                                        return Text(
+                                          '${state.boxEntities?.length ?? 0}', // Dynamically get box count
+                                          style: const TextStyle(fontSize: 16),
+                                        );
+                                      }
+                                      return const Text(
+                                        '0', // Default value when no data is available
+                                        style: TextStyle(fontSize: 16),
+                                      );
+                                    },
+                                  ),
                                   const SizedBox(width: 4),
                                   Image.asset(
                                     'lib/assets/box.png',
@@ -105,56 +117,73 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
               ),
             ),
           ),
-          BlocListener<BoxBloc, BoxState>(
-            listener: (content, state) {
+          BlocBuilder<BoxBloc, BoxState>(
+            builder: (context, state) {
+              print(state);
               if (state is BoxError) {
-                print(state.message);
-                showDialog(
+                // Show an error dialog and also return a sliver widget
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                          contentPadding: EdgeInsets.zero,
-                          backgroundColor: Colors.transparent,
-                          insetPadding:
-                              const EdgeInsets.symmetric(horizontal: 12),
-                          content: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(.6),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(12.0))),
-                            child: Text(
-                              state.message,
-                              style: const TextStyle(color: Colors.redAccent),
-                            ),
-                          ),
-                        ));
-              } else if (state is BoxesBySuppliesIdSuccess) {
-                setState(() {
-                  _boxEntities = state.boxEntities ?? [];
+                      contentPadding: EdgeInsets.zero,
+                      backgroundColor: Colors.transparent,
+                      insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+                      content: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(.6),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12.0))),
+                        child: Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.redAccent),
+                        ),
+                      ),
+                    ),
+                  );
                 });
-              }
-            },
-            child: SliverPadding(
-              padding: const EdgeInsets.only(
-                  bottom: kBottomNavigationBarHeight + 100,
-                  left: 16,
-                  right: 16),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    if(_boxEntities.isEmpty) {
-                      return const Center(child: Text('Короб нет'),);
-                    }
 
-                    final box = _boxEntities[index];
-                    return ListTile(
-                      title: Text('${box.boxNumber} кол-во товаров: ${box.productEntities?.length ?? 0}'),
-                    );
-                  },
-                  childCount: _boxEntities.length,
+                // Return an empty sliver as fallback
+                return const SliverToBoxAdapter(
+                  child: SizedBox.shrink(),
+                );
+              } else if (state is BoxesBySuppliesIdSuccess) {
+                // Update the boxCount using a StatefulBuilder or setState safely
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                //   setState(() {
+                //     boxCount = state.boxEntities!.length;
+                //   });
+                // });
+
+                // Render the list of boxes
+                return SliverPadding(
+                  padding: const EdgeInsets.only(
+                      bottom: kBottomNavigationBarHeight + 100,
+                      left: 16,
+                      right: 16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        final box = state.boxEntities![index];
+                        return ListTile(
+                          title: Text(
+                              '${box.boxNumber} кол-во товаров: ${box.productEntities?.length ?? 0}'),
+                        );
+                      },
+                      childCount: state.boxEntities?.length ?? 0,
+                    ),
+                  ),
+                );
+              }
+
+              // For loading or unexpected states, return a placeholder Sliver
+              return const SliverToBoxAdapter(
+                child: Center(
+                  child: Text('Что-то пошло не так...'),
                 ),
-              ),
-            ),
-          ),
+              );
+            },
+          )
         ],
       ),
     );

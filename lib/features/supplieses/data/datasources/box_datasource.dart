@@ -31,6 +31,7 @@ class BoxDatasource {
       }
 
       // Insert the associated product models into the `box_products` table
+      print('insertBox box $box |. boxId $boxId');
       if (box.productModels != null && box.productModels!.isNotEmpty) {
         for (var product in box.productModels!) {
           await txn.insert('box_products', {
@@ -124,13 +125,15 @@ class BoxDatasource {
     List<BoxModel> boxes = [];
     for (var boxRow in boxRows) {
       final boxId = boxRow['id'] as int;
-
+      print('boxId $boxId');
       // Fetch associated products for the current box
       final productRows = await db.query(
-        'exel_products',
+        'box_products',
         where: 'box_id = ?',
         whereArgs: [boxId],
       );
+
+      print('productRows $productRows');
 
       // Map the product rows to ProductEntity
       final productModels = productRows.map((productRow) {

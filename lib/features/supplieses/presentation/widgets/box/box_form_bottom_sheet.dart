@@ -160,17 +160,16 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                                 _boxNumberController.text,
                                             suppliesId: widget.suppliesId,
                                             productEntities: _selectedProducts
-                                                .where((el) =>
-                                                    el !=
-                                                    null)
-                                                .cast<
-                                                    ProductEntity>()
+                                                .where((el) => el != null)
+                                                .cast<ProductEntity>()
                                                 .toList());
 
                                         context.read<BoxBloc>().add(
                                               BoxCreateEvent(
                                                   boxEntity: boxEntity),
                                             );
+                                        context.read<BoxBloc>().add(
+                                            (BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId)));
                                       }),
                                 );
                               },
