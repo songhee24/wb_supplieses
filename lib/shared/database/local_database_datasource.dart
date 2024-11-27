@@ -16,7 +16,7 @@ class LocalDatabaseDatasource {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    await _deleteDatabase('app.db');
+    // await _deleteDatabase('app.db');
     _database = await _initDB('app.db');
     return _database!;
   }
@@ -46,7 +46,8 @@ class LocalDatabaseDatasource {
       brand TEXT,
       barcode TEXT,
       size TEXT,
-      russian_size TEXT
+      russian_size TEXT,
+      count INTEGER
     )
     ''');
 

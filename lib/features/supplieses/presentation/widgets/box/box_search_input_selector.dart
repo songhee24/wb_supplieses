@@ -26,6 +26,8 @@ class BoxSearchInputSelector extends StatefulWidget {
 }
 
 class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
+  final TextEditingController _productNumberController =
+      TextEditingController();
   ProductEntity? _selectedProduct;
   bool _isDropdownVisible = false;
 
@@ -33,6 +35,12 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
   void initState() {
     super.initState();
     _selectedProduct = widget.initialProduct;
+  }
+
+  @override
+  void dispose() {
+    _productNumberController.dispose();
+    super.dispose();
   }
 
   void _clearSelection() {
@@ -46,135 +54,187 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return _selectedProduct != null
-        ? Card(
-            child: ListTile(
-              titleAlignment: ListTileTitleAlignment.top,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildRow(
-                      'Имя товара: ', _selectedProduct?.productName ?? 'N/A'),
-                  _buildRow('Артикул продавца: ',
-                      _selectedProduct?.sellersArticle ?? 'N/A'),
-                  _buildRow(
-                      'Артикул WB: ', _selectedProduct?.articleWB ?? 'N/A'),
-                  _buildRow('Размер: ', _selectedProduct?.size ?? 'N/A'),
-                ],
-              ),
-              dense: true,
-              contentPadding: const EdgeInsets.only(left: 12, right: 6),
-              trailing: SizedBox(
-                width: 24,
-                height: 24,
-                child: IconButton(
-                  padding: const EdgeInsets.all(2),
-                  iconSize: 20,
-                  icon: const Icon(Icons.delete),
-                  onPressed: _clearSelection,
-                ),
-              ),
-            ),
-          )
-        : Column(
+    if (_selectedProduct != null) {
+      return Card(
+        child: ListTile(
+          dense: true,
+          minTileHeight: 0,
+          minVerticalPadding: 0,
+          titleAlignment: ListTileTitleAlignment.top,
+          title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: TextFormField(
-                      controller: widget.textController,
-                      validator: widget.validator,
-                      onChanged: (query) {
-                        if (query.isNotEmpty) {
-                          setState(() {
-                            _isDropdownVisible = true;
-                          });
-                          context.read<BoxBloc>().add(
-                                BoxSearchProductsEvent(query: query),
-                              );
-                        } else {
-                          setState(() {
-                            _isDropdownVisible = false;
-                          });
-                        }
-                      },
-                      decoration: const InputDecoration(
-                          labelText: 'Поиск товара для коробки',
-                          labelStyle: TextStyle(fontSize: 12)),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: TextFormField(
-                      controller: widget.sizeController,
-                      validator: widget.validator,
-                      onChanged: (query) {
-                        // print('widget.textController.text ${widget.textController.text}.    query:${query}');
-                        if (query.isNotEmpty &&
-                            widget.textController.text.isNotEmpty) {
-                          setState(() {
-                            _isDropdownVisible = true;
-                          });
-                          context.read<BoxBloc>().add(
-                                BoxSearchProductsEvent(
-                                    query: widget.textController.text,
-                                    size: query),
-                              );
-                        } else {
-                          setState(() {
-                            _isDropdownVisible = false;
-                          });
-                        }
-                      },
-                      decoration: const InputDecoration(
-                          labelText: 'Поиск по размеру',
-                          labelStyle: TextStyle(fontSize: 9)),
-                    ),
-                  ),
-                ],
+              _buildRow('Имя товара: ', _selectedProduct?.productName ?? 'N/A'),
+              _buildRow('Артикул продавца: ',
+                  _selectedProduct?.sellersArticle ?? 'N/A'),
+              _buildRow('Артикул WB: ', _selectedProduct?.articleWB ?? 'N/A'),
+              _buildRow('Размер: ', _selectedProduct?.size ?? 'N/A'),
+              _buildRow('Кол-во: ', '${_selectedProduct?.count} шт'),
+            ],
+          ),
+          contentPadding:
+              const EdgeInsets.only(left: 12, right: 6, top: 12, bottom: 0),
+          trailing: SizedBox(
+            width: 32,
+            height: 32,
+            child: IconButton(
+              padding: const EdgeInsets.all(2),
+              iconSize: 28,
+              icon: const Icon(Icons.delete),
+              onPressed: _clearSelection,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Flexible(
+                flex: 2,
+                child: TextFormField(
+                  controller: widget.textController,
+                  validator: widget.validator,
+                  onChanged: (query) {
+                    if (query.isNotEmpty) {
+                      setState(() {
+                        _isDropdownVisible = true;
+                      });
+                      context.read<BoxBloc>().add(
+                            BoxSearchProductsEvent(query: query),
+                          );
+                    } else {
+                      setState(() {
+                        _isDropdownVisible = false;
+                      });
+                    }
+                  },
+                  decoration: const InputDecoration(
+                      labelText: 'Поиск товара для коробки',
+                      labelStyle: TextStyle(fontSize: 12)),
+                ),
               ),
-              if (_isDropdownVisible)
-                BlocBuilder<BoxBloc, BoxState>(
-                  builder: (context, state) {
-                    if (state is BoxSearchLoading) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Center(child: CupertinoActivityIndicator()),
-                      );
-                    } else if (state is BoxSearchSuccess) {
-                      if (state.products.isEmpty) {
-                        return const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Товары не найдены'),
-                        );
-                      }
-                      return Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        height: 220,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: SingleChildScrollView(
-                          physics: const ScrollPhysics(),
-                          child: ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: state.products.length,
-                            itemBuilder: (context, index) {
-                              final product = state.products[index];
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
-                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                  // border: Border.all(color: Colors.white),
-                                ),
-                                child: ListTile(
+              const SizedBox(width: 6),
+              Flexible(
+                child: TextFormField(
+                  controller: widget.sizeController,
+                  validator: widget.validator,
+                  onChanged: (query) {
+                    // print('widget.textController.text ${widget.textController.text}.    query:${query}');
+                    if (query.isNotEmpty &&
+                        widget.textController.text.isNotEmpty) {
+                      setState(() {
+                        _isDropdownVisible = true;
+                      });
+                      context.read<BoxBloc>().add(
+                            BoxSearchProductsEvent(
+                                query: widget.textController.text, size: query),
+                          );
+                    } else {
+                      setState(() {
+                        _isDropdownVisible = false;
+                      });
+                    }
+                  },
+                  decoration: const InputDecoration(
+                      labelText: 'Поиск по размеру',
+                      labelStyle: TextStyle(fontSize: 9)),
+                ),
+              ),
+            ],
+          ),
+          if (_isDropdownVisible)
+            BlocBuilder<BoxBloc, BoxState>(
+              builder: (context, state) {
+                if (state is BoxSearchLoading) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: CupertinoActivityIndicator()),
+                  );
+                } else if (state is BoxSearchSuccess) {
+                  if (state.products.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('Товары не найдены'),
+                    );
+                  }
+                  return Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    height: 220,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: SingleChildScrollView(
+                      physics: const ScrollPhysics(),
+                      child: ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: state.products.length,
+                        itemBuilder: (context, index) {
+                          final product = state.products[index];
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(4)),
+                              // border: Border.all(color: Colors.white),
+                            ),
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  titleAlignment: ListTileTitleAlignment.top,
+                                  trailing: SizedBox(
+                                    width: 32,
+                                    height: 32,
+                                    child: IconButton(
+                                      padding: const EdgeInsets.all(2),
+                                      iconSize: 28,
+                                      icon: const Icon(Icons.add_box_rounded),
+                                      onPressed: () {
+                                        setState(() {
+                                          final selectedProductModel =
+                                          ProductEntity(
+                                            groupId: product?.groupId,
+                                            sellersArticle:
+                                            product?.sellersArticle ??
+                                                '',
+                                            articleWB:
+                                            product?.articleWB ?? '',
+                                            productName:
+                                            product?.productName ?? '',
+                                            category:
+                                            product?.category ?? '',
+                                            brand: product?.brand ?? '',
+                                            barcode:
+                                            product?.barcode ?? '',
+                                            size: product?.size ?? '',
+                                            russianSize:
+                                            product?.russianSize ?? '',
+                                            count: int.parse(
+                                              _productNumberController.text.isEmpty ? '0' : _productNumberController.text,
+                                            ),
+                                          );
+
+                                          _selectedProduct = selectedProductModel;
+                                          _isDropdownVisible = false;
+                                          widget.onProductSelected(product);
+                                          widget.textController.text =
+                                              product!.productName;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  dense: true,
+                                  minTileHeight: 0,
+                                  minVerticalPadding: 0,
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 12, right: 6, top: 12, bottom: 0),
                                   title: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -183,41 +243,101 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                           product?.productName ?? 'N/A'),
                                       _buildRow('Артикул продавца: ',
                                           product?.sellersArticle ?? 'N/A'),
+                                      // _buildRow('Артикул WB: ',
+                                      //     product?.articleWB ?? 'N/A'),
+                                      // _buildRow('Размер: ', product?.size ?? 'N/A'),
+                                    ],
+                                  ),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  minVerticalPadding: 0,
+                                  minTileHeight: 0,
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 12, right: 16, top: 0, bottom: 0),
+                                  title: Column(
+                                    children: [
                                       _buildRow('Артикул WB: ',
                                           product?.articleWB ?? 'N/A'),
                                       _buildRow(
                                           'Размер: ', product?.size ?? 'N/A'),
                                     ],
                                   ),
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedProduct = product;
-                                      _isDropdownVisible = false;
-                                      widget.onProductSelected(product);
-                                      widget.textController.text =
-                                          product!.productName;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    } else if (state is BoxError) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Ошибка: ${state.message}',
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-            ],
-          );
+                                  trailing: SizedBox(
+                                    width: 82,
+                                    height: 40,
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          const Text(
+                                            'кол-во',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                          SizedBox(
+                                            width: 31,
+                                            height: 20,
+                                            child: TextFormField(
+                                              controller:
+                                                  _productNumberController,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              cursorHeight: 12,
+                                              decoration: const InputDecoration(
+                                                hintText: "0",
+                                                contentPadding: EdgeInsets.only(
+                                                    bottom: 0, left: 2),
+                                                border: OutlineInputBorder(),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: Colors.grey),
+                                                        borderRadius:
+                                                            BorderRadius.zero),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white),
+                                                        borderRadius:
+                                                            BorderRadius.zero),
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                } else if (state is BoxError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Ошибка: ${state.message}',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+        ],
+      );
+    }
   }
 }
 

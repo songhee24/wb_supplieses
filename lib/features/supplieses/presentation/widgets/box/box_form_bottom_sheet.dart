@@ -106,6 +106,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly
                                     ],
+                                    keyboardType: TextInputType.number,
                                     cursorHeight: 10,
                                     decoration: const InputDecoration(
                                       contentPadding: EdgeInsets.only(bottom: 5),
