@@ -189,4 +189,13 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
       throw Exception('Failed to get box by id: $e');
     }
   }
+
+  @override
+  Future<void> deleteBoxById(int boxId) async {
+    try {
+      await boxDatasource.deleteBoxById(boxId);
+    } catch(e) {
+      throw Exception('Failed to delete box by id: $e');
+    }
+  }
 }

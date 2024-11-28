@@ -46,6 +46,7 @@ class BoxCreatedSuccess extends BoxState {
   const BoxCreatedSuccess(this.boxId);
 }
 
+class BoxDeleteSuccess extends BoxState {}
 
 class BoxError extends BoxState {
   final String message;

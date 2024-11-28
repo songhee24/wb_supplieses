@@ -244,4 +244,22 @@ class BoxDatasource {
     );
   }
 
+  Future<void> deleteBoxById(int boxId) async {
+    await db.transaction((txn) async {
+      // Delete all products related to the box
+      await txn.delete(
+        'box_products',
+        where: 'box_id = ?',
+        whereArgs: [boxId],
+      );
+
+      // Delete the box itself
+      await txn.delete(
+        'box',
+        where: 'id = ?',
+        whereArgs: [boxId],
+      );
+    });
+  }
+
 }

@@ -22,9 +22,20 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     // on<BoxesBySuppliesIdEvent>(_onGetBoxesBySuppliesId);
     on<BoxCreateEvent>(_onBoxCreate);
     on<BoxEditEvent>(_onBoxEdit);
+    on<BoxDeleteEvent>(_onBoxDelete);
   }
 
+  Future<void> _onBoxDelete(BoxDeleteEvent event,
+      Emitter<BoxState> emit) async {
+  try{
+    emit(BoxManageLoading());
+    await boxRepository.deleteBoxById(int.parse(event.boxId));
+    emit(BoxDeleteSuccess());
+  } catch(e) {
+    emit(BoxError(e.toString()));
+  }
 
+  }
   Future<void> _onBoxEdit(BoxEditEvent event,
       Emitter<BoxState> emit) async {
     try {

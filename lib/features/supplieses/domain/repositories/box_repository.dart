@@ -15,4 +15,6 @@ abstract class BoxRepository {
   Future<List<BoxEntity>> getBoxesBySuppliesId(String suppliesId);
 
   Future<BoxEntity?> getBoxById(int boxId);
+
+  Future<void> deleteBoxById(int boxId);
 }
