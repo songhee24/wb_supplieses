@@ -28,8 +28,7 @@ class BoxSearchInputSelector extends StatefulWidget {
 
 class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
   final Debouncer _debouncer = Debouncer();
-  final TextEditingController _productNumberController =
-      TextEditingController();
+
   ProductEntity? _selectedProduct;
   bool _isDropdownVisible = false;
 
@@ -37,13 +36,18 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
   void initState() {
     super.initState();
     _selectedProduct = widget.initialProduct;
+    // for (int i = 0; i < widget.productCount; i++) {
+    //   _productControllers[i] = TextEditingController();
+    // }
   }
 
-  @override
-  void dispose() {
-    _productNumberController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   for (var controller in _productControllers.values) {
+  //     controller.dispose();
+  //   }
+  //   super.dispose();
+  // }
 
   void _clearSelection() {
     setState(() {
@@ -106,11 +110,13 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                       setState(() {
                         _isDropdownVisible = true;
                       });
-                      _debouncer.debounce(duration: duration, onDebounce: () {
-                        context.read<BoxBloc>().add(
-                          BoxSearchProductsEvent(query: query),
-                        );
-                      });
+                      _debouncer.debounce(
+                          duration: duration,
+                          onDebounce: () {
+                            context.read<BoxBloc>().add(
+                                  BoxSearchProductsEvent(query: query),
+                                );
+                          });
                     } else {
                       setState(() {
                         _isDropdownVisible = false;
@@ -134,12 +140,15 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                       setState(() {
                         _isDropdownVisible = true;
                       });
-                      _debouncer.debounce(duration: duration, onDebounce: () {
-                        context.read<BoxBloc>().add(
-                          BoxSearchProductsEvent(
-                              query: widget.textController.text, size: query),
-                        );
-                      });
+                      _debouncer.debounce(
+                          duration: duration,
+                          onDebounce: () {
+                            context.read<BoxBloc>().add(
+                                  BoxSearchProductsEvent(
+                                      query: widget.textController.text,
+                                      size: query),
+                                );
+                          });
                     } else {
                       setState(() {
                         _isDropdownVisible = false;
@@ -184,7 +193,12 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                         shrinkWrap: true,
                         itemCount: state.products.length,
                         itemBuilder: (context, index) {
+                          final Map<int, TextEditingController> _productControllers = {};
+                          for (int i = 0; i < state.products.length; i++) {
+                            _productControllers[i] = TextEditingController();
+                          }
                           final product = state.products[index];
+                          final productSizeController = _productControllers[index]!;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 12),
                             decoration: BoxDecoration(
@@ -206,31 +220,75 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                       icon: const Icon(Icons.add_box_rounded),
                                       onPressed: () {
                                         setState(() {
+                                          if (productSizeController
+                                                  .text.isEmpty ||
+                                              int.parse(
+                                                      productSizeController
+                                                      .text) ==
+                                                  0) {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  insetPadding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12),
+                                                  content: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(.6),
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    12.0))),
+                                                    child: const Text(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      'Пожалуйста добавьте количество продукта',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.orange),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            });
+                                            return;
+                                          }
+
                                           final selectedProductModel =
-                                          ProductEntity(
+                                              ProductEntity(
                                             groupId: product?.groupId,
                                             sellersArticle:
-                                            product?.sellersArticle ??
-                                                '',
-                                            articleWB:
-                                            product?.articleWB ?? '',
+                                                product?.sellersArticle ?? '',
+                                            articleWB: product?.articleWB ?? '',
                                             productName:
-                                            product?.productName ?? '',
-                                            category:
-                                            product?.category ?? '',
+                                                product?.productName ?? '',
+                                            category: product?.category ?? '',
                                             brand: product?.brand ?? '',
-                                            barcode:
-                                            product?.barcode ?? '',
+                                            barcode: product?.barcode ?? '',
                                             size: product?.size ?? '',
                                             russianSize:
-                                            product?.russianSize ?? '',
+                                                product?.russianSize ?? '',
                                             count: int.parse(
-                                              _productNumberController.text.isEmpty ? '0' : _productNumberController.text,
+                                              productSizeController
+                                                      .text.isEmpty
+                                                  ? '0'
+                                                  : productSizeController
+                                                      .text,
                                             ),
                                           );
-                                          _selectedProduct = selectedProductModel;
+                                          _selectedProduct =
+                                              selectedProductModel;
                                           _isDropdownVisible = false;
-                                          widget.onProductSelected(product);
+                                          widget.onProductSelected(selectedProductModel);
                                           widget.textController.text =
                                               product!.productName;
                                         });
@@ -290,8 +348,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                             width: 31,
                                             height: 20,
                                             child: TextFormField(
-                                              controller:
-                                                  _productNumberController,
+                                              controller: productSizeController,
                                               inputFormatters: [
                                                 FilteringTextInputFormatter
                                                     .digitsOnly
