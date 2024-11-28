@@ -11,23 +11,51 @@ class BoxDatasource {
     // Start a transaction to ensure atomic operations
     return await db.transaction((txn) async {
       // If a `boxId` exists, clear previous products for this box
+      // if (box.id != null) {
+      //   await txn.delete(
+      //     'box_products',
+      //     where: 'box_id = ?',
+      //     whereArgs: [box.id],
+      //   );
+      // }
+      //
+      // // Insert the Box if it doesn't already exist
+      // int boxId;
+      // if (box.id == null) {
+      //   boxId = await txn.insert('box', {
+      //     'supplies_id': box.suppliesId,
+      //     'box_number': int.parse(box.boxNumber),
+      //   });
+      // } else {
+      //   boxId = int.parse(box.id!);
+      // }
+
+      int boxId;
+
       if (box.id != null) {
+        // If a `boxId` exists, update the box_number
+        await txn.update(
+          'box',
+          {'box_number': int.parse(box.boxNumber)},
+          where: 'id = ?',
+          whereArgs: [box.id],
+        );
+
+        // Clear previous products for this box
         await txn.delete(
           'box_products',
           where: 'box_id = ?',
           whereArgs: [box.id],
         );
-      }
 
-      // Insert the Box if it doesn't already exist
-      int boxId;
-      if (box.id == null) {
+        // Use the existing boxId
+        boxId = int.parse(box.id!);
+      } else {
+        // Insert a new Box if `box.id` is null
         boxId = await txn.insert('box', {
           'supplies_id': box.suppliesId,
           'box_number': int.parse(box.boxNumber),
         });
-      } else {
-        boxId = int.parse(box.id!);
       }
 
       // Insert the associated product models into the `box_products` table
