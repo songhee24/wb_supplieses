@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_search_input_selector.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
@@ -27,9 +28,15 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   final TextEditingController _boxNumberController =
       TextEditingController(text: '0');
 
+  final duration = const Duration(milliseconds: 700);
+
+  final Debouncer _debouncer = Debouncer();
+
   void _onBoxNumberChanged() {
     // Only trigger the event if boxEntity's id is null
-    if (widget.boxEntity?.id != null && _boxNumberController.text.isNotEmpty) {
+    if (widget.boxEntity?.id != null &&
+        _boxNumberController.text.isNotEmpty &&
+        widget.boxEntity?.boxNumber != _boxNumberController.text) {
       final boxEntity = BoxEntity(
         id: widget.boxEntity?.id,
         boxNumber: _boxNumberController.text,
@@ -40,11 +47,15 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
             .toList(), // Adjust based on your logic
       );
 
-      // Dispatch events to the Bloc
-      context.read<BoxBloc>().add(BoxCreateEvent(boxEntity: boxEntity));
-      context
-          .read<SuppliesBloc>()
-          .add(BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId));
+      _debouncer.debounce(
+          duration: duration,
+          onDebounce: () {
+            // Dispatch events to the Bloc
+            context.read<BoxBloc>().add(BoxCreateEvent(boxEntity: boxEntity));
+            context
+                .read<SuppliesBloc>()
+                .add(BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId));
+          });
     }
   }
 
