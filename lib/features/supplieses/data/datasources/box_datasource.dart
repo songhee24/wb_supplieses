@@ -196,4 +196,52 @@ class BoxDatasource {
     return boxes;
   }
 
+
+  Future<BoxModel?> getBoxById(int boxId) async {
+    // Query the box table to get the box details
+    final boxResult = await db.query(
+      'box',
+      where: 'id = ?',
+      whereArgs: [boxId],
+    );
+
+    if (boxResult.isEmpty) {
+      return null; // No box found for the given boxId
+    }
+
+    // Extract the box data
+    final boxData = boxResult.first;
+
+    // Query the box_products table to get the related products
+    final productResults = await db.query(
+      'box_products',
+      where: 'box_id = ?',
+      whereArgs: [boxId],
+    );
+
+    // Map the products to a list of ProductModel
+    final productModels = productResults.map((productData) {
+      return ProductModel(
+        groupId: productData['group_id'] as String?,
+        sellersArticle: productData['sellers_article'] as String,
+        articleWB: productData['article_wb'] as String,
+        productName: productData['product_name'] as String,
+        category: productData['category'] as String,
+        brand: productData['brand'] as String,
+        barcode: productData['barcode'] as String,
+        size: productData['size'] as String,
+        russianSize: productData['russian_size'] as String,
+        count: productData['count'] as int,
+      );
+    }).toList();
+
+    // Return the BoxModel
+    return BoxModel(
+      id: boxData['id'].toString(),
+      suppliesId: boxData['supplies_id'] as String,
+      boxNumber: (boxData['box_number'] as int).toString(),
+      productModels: productModels,
+    );
+  }
+
 }

@@ -172,7 +172,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                       childCount: state.boxEntities?.length ?? 0,
                       (BuildContext context, int index) {
                         final box = state.boxEntities![index];
-                        return SuppliesInnerBoxCard(boxEntity: box);
+                        return SuppliesInnerBoxCard(boxEntity: box, suppliesId: widget.suppliesEntity?.id);
                       },
                     ),
                     gridDelegate:

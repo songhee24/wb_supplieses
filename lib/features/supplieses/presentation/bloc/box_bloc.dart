@@ -21,6 +21,22 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     //     _onBoxCreateAndFetchedBySuppliesId);
     // on<BoxesBySuppliesIdEvent>(_onGetBoxesBySuppliesId);
     on<BoxCreateEvent>(_onBoxCreate);
+    on<BoxEditEvent>(_onBoxEdit);
+  }
+
+
+  Future<void> _onBoxEdit(BoxEditEvent event,
+      Emitter<BoxState> emit) async {
+    try {
+      emit(BoxManageLoading());
+
+      final box = await boxRepository.getBoxById(int.parse(event.boxId));
+
+      emit(BoxGetByIdSuccess(boxEntity: box));
+
+    } catch (error) {
+      emit(BoxError(error.toString()));
+    }
   }
 
 

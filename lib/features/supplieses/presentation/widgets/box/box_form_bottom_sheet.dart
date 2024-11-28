@@ -9,9 +9,11 @@ import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 class BoxFormBottomSheet extends StatefulWidget {
+  final BoxEntity? boxEntity;
   final String suppliesId;
 
-  const BoxFormBottomSheet({super.key, required this.suppliesId});
+  const BoxFormBottomSheet(
+      {super.key, required this.suppliesId, this.boxEntity});
 
   @override
   State<BoxFormBottomSheet> createState() => _BoxFormBottomSheetState();
@@ -40,23 +42,41 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _controllers.add({
-        'text': TextEditingController(),
-        'size': TextEditingController(),
+    // setState(() {
+    //   _controllers.add({
+    //     'text': TextEditingController(),
+    //     'size': TextEditingController(),
+    //   });
+    //   _selectedProducts.add(null);
+    // });
+
+    if (widget.boxEntity?.id == null) {
+      context.read<BoxBloc>().add(
+            BoxCreateEvent(
+              boxEntity: BoxEntity(
+                  boxNumber: _boxNumberController.text,
+                  suppliesId: widget.suppliesId),
+            ),
+          );
+      context
+          .read<SuppliesBloc>()
+          .add((BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId)));
+    } else {
+      setState(() {
+        _boxId = widget.boxEntity!.id;
+        _boxNumberController.text = widget.boxEntity!.boxNumber.toString();
+        if (widget.boxEntity?.productEntities != null) {
+          _selectedProducts.addAll(widget.boxEntity!.productEntities!);
+
+          widget.boxEntity?.productEntities?.forEach((p) {
+              _controllers.add({
+                'text': TextEditingController(),
+                'size': TextEditingController(),
+              });
+          });
+        }
       });
-      _selectedProducts.add(null);
-    });
-    context.read<BoxBloc>().add(
-          BoxCreateEvent(
-            boxEntity: BoxEntity(
-                boxNumber: _boxNumberController.text,
-                suppliesId: widget.suppliesId),
-          ),
-        );
-    context
-        .read<SuppliesBloc>()
-        .add((BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId)));
+    }
   }
 
   void _addSearchField() {
@@ -78,9 +98,11 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   @override
   Widget build(BuildContext context) {
 
+    print('_boxId $_boxId');
+    print('_selectedProducts $_selectedProducts');
     double sheetHeight = MediaQuery.of(context).size.height;
     return BlocListener<BoxBloc, BoxState>(
-      listener:(context, state) {
+      listener: (context, state) {
         if (state is BoxCreatedSuccess) {
           // Save the result to local state
           setState(() {
@@ -170,7 +192,6 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                               BlocBuilder<BoxBloc, BoxState>(
                                 builder: (context, state) {
                                   if (state is BoxCreatedSuccess) {
-                                    print('_boxId $_boxId');
                                     // print('state.boxId ${state.boxId}');
                                     // WidgetsBinding.instance
                                     //     .addPostFrameCallback((_) {
@@ -194,8 +215,8 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                                   horizontal: 12),
                                           content: Container(
                                             decoration: BoxDecoration(
-                                                color:
-                                                    Colors.black.withOpacity(.6),
+                                                color: Colors.black
+                                                    .withOpacity(.6),
                                                 borderRadius:
                                                     const BorderRadius.all(
                                                         Radius.circular(12.0))),
@@ -215,41 +236,52 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                   }
 
                                   return ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: _controllers.length,
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final controllers = _controllers[index];
                                       return Padding(
-                                        padding: const EdgeInsets.only(bottom: 8),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8),
                                         child: BoxSearchInputSelector(
                                           textController: controllers['text']!,
                                           sizeController: controllers['size']!,
+                                          initialProduct: _selectedProducts[index],
                                           onProductSelected: (p) {
-                                            if(_boxId == null) {
+                                            if (_boxId == null) {
                                               WidgetsBinding.instance
                                                   .addPostFrameCallback((_) {
                                                 showDialog(
                                                   context: context,
-                                                  builder: (context) => AlertDialog(
-                                                    contentPadding: EdgeInsets.zero,
-                                                    backgroundColor: Colors.transparent,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                    backgroundColor:
+                                                        Colors.transparent,
                                                     insetPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12),
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 12),
                                                     content: Container(
                                                       decoration: BoxDecoration(
-                                                          color:
-                                                          Colors.black.withOpacity(.6),
+                                                          color: Colors.black
+                                                              .withOpacity(.6),
                                                           borderRadius:
-                                                          const BorderRadius.all(
-                                                              Radius.circular(12.0))),
+                                                              const BorderRadius
+                                                                  .all(
+                                                                  Radius.circular(
+                                                                      12.0))),
                                                       child: const Text(
-                                                        textAlign: TextAlign.center,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         'Что то пошло не так коробка не смогла создаться попробуйте заново',
                                                         style: TextStyle(
-                                                            color: Colors.redAccent),
+                                                            color: Colors
+                                                                .redAccent),
                                                       ),
                                                     ),
                                                   ),
@@ -262,13 +294,15 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
 
                                             BoxEntity boxEntity = BoxEntity(
                                                 id: _boxId,
-                                                boxNumber:
-                                                    _boxNumberController.text,
+                                                boxNumber: _boxNumberController
+                                                    .text,
                                                 suppliesId: widget.suppliesId,
-                                                productEntities: _selectedProducts
-                                                    .where((el) => el != null)
-                                                    .cast<ProductEntity>()
-                                                    .toList());
+                                                productEntities:
+                                                    _selectedProducts
+                                                        .where(
+                                                            (el) => el != null)
+                                                        .cast<ProductEntity>()
+                                                        .toList());
 
                                             // context.read<BoxBloc>().add(
                                             //       BoxCreateAndFetchedBySuppliesIdEvent(

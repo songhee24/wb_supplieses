@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/bloc/box_bloc.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_form_bottom_sheet.dart';
 
 class SuppliesInnerBoxCard extends StatefulWidget {
+  final String? suppliesId;
   final BoxEntity boxEntity;
 
-  const SuppliesInnerBoxCard({super.key, required this.boxEntity});
+  const SuppliesInnerBoxCard(
+      {super.key, required this.boxEntity, this.suppliesId});
 
   @override
   State<SuppliesInnerBoxCard> createState() => _SuppliesInnerBoxCardState();
 }
 
 class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
-
   Future<void> _onGetBoxById(BuildContext context) async {
-    // if (supplies.id != null) {
-    //   BlocProvider.of<SuppliesBloc>(context).add(
-    //     SuppliesGetByIdEvent(suppliesId: supplies.id!),
-    //   );
-    //   showModalBottomSheet(
-    //       useRootNavigator: true,
-    //       isScrollControlled: true,
-    //       context: context,
-    //       builder: (BuildContext context) {
-    //         return SuppliesFormBottomSheet(
-    //           suppliesId: supplies.id,
-    //         );
-    //       });
-    // }
+    if (widget.boxEntity.id != null && widget.suppliesId != null) {
+      BlocProvider.of<BoxBloc>(context).add(
+        BoxEditEvent(boxId: widget.boxEntity.id!),
+      );
+      showModalBottomSheet(
+          useRootNavigator: true,
+          isScrollControlled: true,
+          context: context,
+          builder: (BuildContext context) {
+            return BoxFormBottomSheet(suppliesId: widget.suppliesId!, boxEntity: widget.boxEntity,);
+          });
+    }
   }
 
   Future<void> _showDeleteConfirmation(BuildContext context) async {

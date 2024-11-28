@@ -30,6 +30,15 @@ class BoxCreateEvent extends BoxEvent {
   List<Object?> get props => [boxEntity];
 }
 
+class BoxEditEvent extends BoxEvent {
+  final String boxId;
+
+  BoxEditEvent({required this.boxId});
+
+  @override
+  List<Object?> get props => [boxId];
+}
+
 // class BoxCreateAndFetchedBySuppliesIdEvent extends BoxEvent {
 //   final String suppliesId;
 //   final BoxEntity? boxEntity;

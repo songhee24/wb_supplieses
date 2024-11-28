@@ -35,6 +35,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
   @override
   void initState() {
     super.initState();
+    print('widget.initialProduct, ${widget.initialProduct}');
     _selectedProduct = widget.initialProduct;
     // for (int i = 0; i < widget.productCount; i++) {
     //   _productControllers[i] = TextEditingController();

@@ -13,4 +13,6 @@ abstract class BoxRepository {
   Future<List<BoxEntity>?> getSupplyBoxesById(String suppliesId);
 
   Future<List<BoxEntity>> getBoxesBySuppliesId(String suppliesId);
+
+  Future<BoxEntity?> getBoxById(int boxId);
 }
