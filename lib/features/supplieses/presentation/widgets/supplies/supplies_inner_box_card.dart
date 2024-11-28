@@ -114,8 +114,9 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${product?.sellersArticle}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                            children: <Widget>[
+                              Text('${product?.sellersArticle}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),),
+                              const SizedBox(height: 4),
                               RichText(
                                 text: TextSpan(
                                   text: 'Имя: ',
@@ -125,7 +126,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                                   ],
                                 ),
                               ),
-
+                              const SizedBox(height: 8),
                               RichText(
                                 text: TextSpan(
                                   text: 'Арт Wb: ',
@@ -135,6 +136,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 4),
                               RichText(
                                 text: TextSpan(
                                   text: 'Barcode: ',
@@ -144,9 +146,10 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 4),
                               RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(fontSize: 12),
+                                text: const TextSpan(
+                                  style: TextStyle(fontSize: 12),
                                   children:  <TextSpan>[
 
                                   ],
