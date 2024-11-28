@@ -27,7 +27,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
     try {
       emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
       List<BoxEntity> boxEntities =
-      await boxRepository.getBoxesBySuppliesId(event.suppliesId);
+      await boxRepository.getBoxesBySuppliesId(event.suppliesEntity.id!);
       // emit(BoxesBySuppliesIdSuccess(boxEntities: boxEntities));
       emit(state.copyWith(suppliesStatus: SuppliesStatus.success, boxEntities: boxEntities));
     } catch (e) {
@@ -82,6 +82,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       emit(state.copyWith(
           suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {
+      print(e);
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
     }
   }

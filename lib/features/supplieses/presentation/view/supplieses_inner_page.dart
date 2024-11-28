@@ -19,7 +19,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
   @override
   void initState() {
     context.read<SuppliesBloc>().add(
-        (BoxesBySuppliesIdEvent(suppliesId: '${widget.suppliesEntity!.id}')));
+        (BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity!)));
     super.initState();
   }
 
@@ -172,7 +172,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                       childCount: state.boxEntities?.length ?? 0,
                       (BuildContext context, int index) {
                         final box = state.boxEntities![index];
-                        return SuppliesInnerBoxCard(boxEntity: box, suppliesId: widget.suppliesEntity?.id);
+                        return SuppliesInnerBoxCard(boxEntity: box, suppliesEntity: widget.suppliesEntity);
                       },
                     ),
                     gridDelegate:

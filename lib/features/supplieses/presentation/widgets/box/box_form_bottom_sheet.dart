@@ -5,16 +5,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_search_input_selector.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
 class BoxFormBottomSheet extends StatefulWidget {
   final BoxEntity? boxEntity;
-  final String suppliesId;
+  final SuppliesEntity suppliesEntity;
 
   const BoxFormBottomSheet(
-      {super.key, required this.suppliesId, this.boxEntity});
+      {super.key, required this.suppliesEntity, this.boxEntity});
 
   @override
   State<BoxFormBottomSheet> createState() => _BoxFormBottomSheetState();
@@ -40,7 +41,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
       final boxEntity = BoxEntity(
         id: widget.boxEntity?.id,
         boxNumber: _boxNumberController.text,
-        suppliesId: widget.suppliesId,
+        suppliesId: widget.suppliesEntity.id,
         productEntities: _selectedProducts
             .where((el) => el != null)
             .cast<ProductEntity>()
@@ -54,7 +55,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
             context.read<BoxBloc>().add(BoxCreateEvent(boxEntity: boxEntity));
             context
                 .read<SuppliesBloc>()
-                .add(BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId));
+                .add(BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity));
           });
     }
   }
@@ -113,12 +114,12 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
             BoxCreateEvent(
               boxEntity: BoxEntity(
                   boxNumber: _boxNumberController.text,
-                  suppliesId: widget.suppliesId),
+                  suppliesId: widget.suppliesEntity.id),
             ),
           );
       context
           .read<SuppliesBloc>()
-          .add((BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId)));
+          .add((BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity)));
     } else {
       setState(() {
         _boxId = widget.boxEntity!.id;
@@ -354,7 +355,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                               id: _boxId,
                                               boxNumber:
                                                   _boxNumberController.text,
-                                              suppliesId: widget.suppliesId,
+                                              suppliesId: widget.suppliesEntity.id,
                                               productEntities: _selectedProducts
                                                   .where((el) => el != null)
                                                   .cast<ProductEntity>()
@@ -373,8 +374,8 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                                 );
                                             context.read<SuppliesBloc>().add(
                                                 (BoxesBySuppliesIdEvent(
-                                                    suppliesId:
-                                                        widget.suppliesId)));
+                                                    suppliesEntity:
+                                                        widget.suppliesEntity)));
                                           },
                                         ),
                                       );

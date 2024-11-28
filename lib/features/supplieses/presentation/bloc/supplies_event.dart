@@ -52,10 +52,10 @@ final class SuppliesDeleteEvent extends SuppliesEvent {
 }
 
 class BoxesBySuppliesIdEvent extends SuppliesEvent {
-  final String suppliesId;
+  final SuppliesEntity suppliesEntity;
 
-  BoxesBySuppliesIdEvent({required this.suppliesId});
+  BoxesBySuppliesIdEvent({required this.suppliesEntity});
 
   @override
-  List<Object> get props => [suppliesId];
+  List<Object> get props => [suppliesEntity];
 }

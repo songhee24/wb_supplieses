@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wb_supplieses/app/router/bottom_destination.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/bloc/supplies_tab_index_cubit.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/widgets.dart';
 
@@ -34,12 +35,13 @@ class LayoutScaffold extends StatelessWidget {
                 return FloatingActionButton(
                   onPressed: () {
                     if (suppliesId != null) {
+                      final suppliesEntity = state.extra as SuppliesEntity;
                       showModalBottomSheet(
                           isScrollControlled: true,
                           context: context,
                           builder: (BuildContext context) {
                             return BoxFormBottomSheet(
-                              suppliesId: suppliesId,
+                              suppliesEntity: suppliesEntity,
                             );
                           });
                     } else if (selectedTabIndex == 0) {

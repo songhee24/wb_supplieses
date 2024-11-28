@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/bloc/box_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/bloc/supplies_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_form_bottom_sheet.dart';
 
 class SuppliesInnerBoxCard extends StatefulWidget {
-  final String? suppliesId;
+  final SuppliesEntity? suppliesEntity;
   final BoxEntity boxEntity;
 
   const SuppliesInnerBoxCard(
-      {super.key, required this.boxEntity, this.suppliesId});
+      {super.key, required this.boxEntity, this.suppliesEntity});
 
   @override
   State<SuppliesInnerBoxCard> createState() => _SuppliesInnerBoxCardState();
@@ -18,7 +19,7 @@ class SuppliesInnerBoxCard extends StatefulWidget {
 
 class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
   Future<void> _onGetBoxById(BuildContext context) async {
-    if (widget.boxEntity.id != null && widget.suppliesId != null) {
+    if (widget.boxEntity.id != null && widget.suppliesEntity != null) {
       BlocProvider.of<BoxBloc>(context).add(
         BoxEditEvent(boxId: widget.boxEntity.id!),
       );
@@ -28,7 +29,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
           context: context,
           builder: (BuildContext context) {
             return BoxFormBottomSheet(
-              suppliesId: widget.suppliesId!,
+              suppliesEntity: widget.suppliesEntity!,
               boxEntity: widget.boxEntity,
             );
           });
@@ -64,7 +65,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
       context.read<BoxBloc>().add(
             BoxDeleteEvent(boxId: widget.boxEntity.id!),
           );
-      context.read<SuppliesBloc>().add(BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId!));
+      context.read<SuppliesBloc>().add(BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity!));
     }
   }
 
