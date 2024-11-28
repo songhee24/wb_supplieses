@@ -11,11 +11,62 @@ class SuppliesInnerBoxCard extends StatefulWidget {
 }
 
 class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
+
+  Future<void> _onGetBoxById(BuildContext context) async {
+    // if (supplies.id != null) {
+    //   BlocProvider.of<SuppliesBloc>(context).add(
+    //     SuppliesGetByIdEvent(suppliesId: supplies.id!),
+    //   );
+    //   showModalBottomSheet(
+    //       useRootNavigator: true,
+    //       isScrollControlled: true,
+    //       context: context,
+    //       builder: (BuildContext context) {
+    //         return SuppliesFormBottomSheet(
+    //           suppliesId: supplies.id,
+    //         );
+    //       });
+    // }
+  }
+
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Удалить Коробку'),
+          content: const Text(
+              'А вы уверены что хотите удалить Коробку? Удаление приведет к удалению всех Товаров!'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Отменить'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Удалить',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && widget.boxEntity.id != null) {
+      // ignore: use_build_context_synchronously
+      // context.read<SuppliesBloc>().add(
+      //   SuppliesDeleteEvent(suppliesId: supplies.id!),
+      // );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final totalQuantity = widget.boxEntity.productEntities?.fold<int>(
       0,
-          (sum, product) => sum + product.count,
+      (sum, product) => sum + product.count,
     );
     return Container(
       decoration: BoxDecoration(
@@ -45,20 +96,64 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Короб № ${widget.boxEntity.boxNumber}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Короб № ${widget.boxEntity.boxNumber}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: PopupMenuButton(
+                          onSelected: (value) {
+                            if (value == 'delete') {
+                              _showDeleteConfirmation(context);
+                            }
+                            if (value == 'edit') {
+                              _onGetBoxById(context);
+                            }
+                          },
+                          padding: EdgeInsets.zero,
+                          iconSize: 20,
+                          icon: const Icon(Icons.more_vert),
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              const PopupMenuItem(
+                                  value: 'delete',
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Text('Удалить')),
+                              const PopupMenuItem(
+                                  value: 'edit',
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Text('Изменить'))
+                            ];
+                          },
+                        ),
+                      )
+                    ],
                   ),
+                  const SizedBox(height: 8),
                   RichText(
                     text: TextSpan(
                       text: 'Общ кол-во товаров: ',
                       style: const TextStyle(fontSize: 12),
-                      children:  <TextSpan>[
-                        TextSpan(text: '$totalQuantity', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: '$totalQuantity',
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   )
@@ -68,12 +163,12 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
             Expanded(
               child: Card(
                 shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(8)),
                 ),
-                margin: const EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: 0),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric( vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 4),
                   child: ListView.builder(
                     padding: const EdgeInsets.all(0.0),
                     shrinkWrap: true,
@@ -84,30 +179,35 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3)
-                          // border: Border(
-                          //   top: BorderSide(width: 1, color: Colors.grey[300]!),
-                          //   bottom: BorderSide(width: 1, color: Colors.grey[300]!),
-                          // ),
-                        ),
+                            color: Colors.grey.withOpacity(0.3)
+                            // border: Border(
+                            //   top: BorderSide(width: 1, color: Colors.grey[300]!),
+                            //   bottom: BorderSide(width: 1, color: Colors.grey[300]!),
+                            // ),
+                            ),
                         child: ListTile(
-                          contentPadding:  EdgeInsets.zero,
+                          contentPadding: EdgeInsets.zero,
                           minVerticalPadding: 1,
                           minTileHeight: 0,
                           minLeadingWidth: 0,
                           dense: true,
-                          title:
-                          Padding(
+                          title: Padding(
                             padding: const EdgeInsets.only(bottom: 12),
                             child: RichText(
                               text: TextSpan(
                                 text: 'Кол-во: ',
                                 style: const TextStyle(fontSize: 12),
-                                children:  <TextSpan>[
-                                  TextSpan(text: '${product?.count}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: '${product?.count}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   const TextSpan(text: '          '),
                                   const TextSpan(text: 'Размер: '),
-                                  TextSpan(text: '${product?.size}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: '${product?.size}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
@@ -115,14 +215,23 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text('${product?.sellersArticle}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),),
+                              Text(
+                                '${product?.sellersArticle}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.white),
+                              ),
                               const SizedBox(height: 4),
                               RichText(
                                 text: TextSpan(
                                   text: 'Имя: ',
                                   style: const TextStyle(fontSize: 12),
-                                  children:  <TextSpan>[
-                                    TextSpan(text: '${product?.productName}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: '${product?.productName}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -131,8 +240,11 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                                 text: TextSpan(
                                   text: 'Арт Wb: ',
                                   style: const TextStyle(fontSize: 12),
-                                  children:  <TextSpan>[
-                                    TextSpan(text: '${product?.articleWB}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: '${product?.articleWB}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -141,8 +253,11 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                                 text: TextSpan(
                                   text: 'Barcode: ',
                                   style: const TextStyle(fontSize: 12),
-                                  children:  <TextSpan>[
-                                    TextSpan(text: '${product?.barcode}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: '${product?.barcode}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -150,9 +265,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                               RichText(
                                 text: const TextSpan(
                                   style: TextStyle(fontSize: 12),
-                                  children:  <TextSpan>[
-
-                                  ],
+                                  children: <TextSpan>[],
                                 ),
                               ),
                             ],
