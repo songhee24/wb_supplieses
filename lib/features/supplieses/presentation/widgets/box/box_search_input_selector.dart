@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/entities/product_entity.dart';
 
@@ -26,6 +27,7 @@ class BoxSearchInputSelector extends StatefulWidget {
 }
 
 class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
+  final Debouncer _debouncer = Debouncer();
   final TextEditingController _productNumberController =
       TextEditingController();
   ProductEntity? _selectedProduct;
@@ -54,6 +56,8 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
 
   @override
   Widget build(BuildContext context) {
+    const duration = Duration(milliseconds: 500);
+
     if (_selectedProduct != null) {
       return Card(
         child: ListTile(
@@ -102,9 +106,11 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                       setState(() {
                         _isDropdownVisible = true;
                       });
-                      context.read<BoxBloc>().add(
-                            BoxSearchProductsEvent(query: query),
-                          );
+                      _debouncer.debounce(duration: duration, onDebounce: () {
+                        context.read<BoxBloc>().add(
+                          BoxSearchProductsEvent(query: query),
+                        );
+                      });
                     } else {
                       setState(() {
                         _isDropdownVisible = false;
@@ -128,10 +134,12 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                       setState(() {
                         _isDropdownVisible = true;
                       });
-                      context.read<BoxBloc>().add(
-                            BoxSearchProductsEvent(
-                                query: widget.textController.text, size: query),
-                          );
+                      _debouncer.debounce(duration: duration, onDebounce: () {
+                        context.read<BoxBloc>().add(
+                          BoxSearchProductsEvent(
+                              query: widget.textController.text, size: query),
+                        );
+                      });
                     } else {
                       setState(() {
                         _isDropdownVisible = false;
