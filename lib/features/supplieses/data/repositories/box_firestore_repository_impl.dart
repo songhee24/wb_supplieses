@@ -136,6 +136,7 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
     try {
       // Transform BoxEntity to BoxModel, including ProductEntities to ProductModels
       final boxModel = BoxModel(
+        id: box.id,
         suppliesId: box.suppliesId,
         boxNumber: box.boxNumber,
         productModels: box.productEntities?.map((productEntity) {
