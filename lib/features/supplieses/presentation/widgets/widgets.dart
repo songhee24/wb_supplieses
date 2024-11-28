@@ -5,3 +5,4 @@ export 'supplies/supplies_app_bar.dart';
 export 'supplies/supplies_frosted_app_bar.dart';
 export 'supplies/supplies_form_bottom_sheet.dart';
 export 'supplies/supplies_card.dart';
+export 'supplies/supplies_inner_box_card.dart';

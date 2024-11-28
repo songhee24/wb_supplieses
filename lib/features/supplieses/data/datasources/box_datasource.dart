@@ -45,6 +45,7 @@ class BoxDatasource {
             'barcode': product.barcode,
             'size': product.size,
             'russian_size': product.russianSize,
+            'count': product.count,
           });
         }
       } else {
@@ -151,6 +152,7 @@ class BoxDatasource {
           barcode: productRow['barcode'] as String,
           size: productRow['size'] as String,
           russianSize: productRow['russian_size'] as String,
+          count: productRow['count'] as int,
         );
       }).toList();
 

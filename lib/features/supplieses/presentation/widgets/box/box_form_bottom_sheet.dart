@@ -77,6 +77,7 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+
     double sheetHeight = MediaQuery.of(context).size.height;
     return BlocListener<BoxBloc, BoxState>(
       listener:(context, state) {

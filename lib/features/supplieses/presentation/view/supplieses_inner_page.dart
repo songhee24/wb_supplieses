@@ -83,7 +83,8 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                                 children: [
                                   BlocBuilder<SuppliesBloc, SuppliesState>(
                                     builder: (context, state) {
-                                      if (state.suppliesStatus == SuppliesStatus.success) {
+                                      if (state.suppliesStatus ==
+                                          SuppliesStatus.success) {
                                         return Text(
                                           '${state.boxEntities?.length ?? 0}',
                                           // Dynamically get box count
@@ -145,7 +146,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                   child: SizedBox.shrink(),
                 );
               } else if (state.suppliesStatus == SuppliesStatus.success) {
-                if(state.boxEntities != null && state.boxEntities!.isEmpty) {
+                if (state.boxEntities != null && state.boxEntities!.isEmpty) {
                   return const SliverToBoxAdapter(
                     child: Center(
                       child: Text('Коробов нет'),
@@ -166,16 +167,24 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                       bottom: kBottomNavigationBarHeight + 100,
                       left: 16,
                       right: 16),
-                  sliver: SliverList(
+                  sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
+                      childCount: state.boxEntities?.length ?? 0,
                       (BuildContext context, int index) {
                         final box = state.boxEntities![index];
-                        return ListTile(
-                          title: Text(
-                              '${box.boxNumber} кол-во товаров: ${box.productEntities?.length ?? 0}'),
-                        );
+                        return SuppliesInnerBoxCard(boxEntity: box);
                       },
-                      childCount: state.boxEntities?.length ?? 0,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      // Number of columns
+                      crossAxisSpacing: 8,
+                      // Horizontal space between grid items
+                      mainAxisSpacing: 12,
+                      // Vertical space between grid items
+                      childAspectRatio:
+                          1, // Width-to-height ratio of grid items
                     ),
                   ),
                 );

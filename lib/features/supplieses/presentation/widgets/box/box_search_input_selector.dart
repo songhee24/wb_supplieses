@@ -193,12 +193,14 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                         shrinkWrap: true,
                         itemCount: state.products.length,
                         itemBuilder: (context, index) {
-                          final Map<int, TextEditingController> _productControllers = {};
+                          final Map<int, TextEditingController>
+                              _productControllers = {};
                           for (int i = 0; i < state.products.length; i++) {
                             _productControllers[i] = TextEditingController();
                           }
                           final product = state.products[index];
-                          final productSizeController = _productControllers[index]!;
+                          final productSizeController =
+                              _productControllers[index]!;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 12),
                             decoration: BoxDecoration(
@@ -222,8 +224,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                         setState(() {
                                           if (productSizeController
                                                   .text.isEmpty ||
-                                              int.parse(
-                                                      productSizeController
+                                              int.parse(productSizeController
                                                       .text) ==
                                                   0) {
                                             WidgetsBinding.instance
@@ -253,8 +254,7 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                                           TextAlign.center,
                                                       'Пожалуйста добавьте количество продукта',
                                                       style: TextStyle(
-                                                          color:
-                                                              Colors.orange),
+                                                          color: Colors.orange),
                                                     ),
                                                   ),
                                                 ),
@@ -278,17 +278,13 @@ class _BoxSearchInputSelectorState extends State<BoxSearchInputSelector> {
                                             russianSize:
                                                 product?.russianSize ?? '',
                                             count: int.parse(
-                                              productSizeController
-                                                      .text.isEmpty
-                                                  ? '0'
-                                                  : productSizeController
-                                                      .text,
-                                            ),
+                                                productSizeController.text),
                                           );
                                           _selectedProduct =
                                               selectedProductModel;
                                           _isDropdownVisible = false;
-                                          widget.onProductSelected(selectedProductModel);
+                                          widget.onProductSelected(
+                                              selectedProductModel);
                                           widget.textController.text =
                                               product!.productName;
                                         });

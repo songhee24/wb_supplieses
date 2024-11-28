@@ -42,5 +42,6 @@ class ProductEntity extends Equatable {
     barcode,
     size,
     russianSize,
+    count,
   ];
 }

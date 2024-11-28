@@ -155,6 +155,7 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
         }).toList(),
       );
 
+      print('boxModel $boxModel');
       // print('createBox boxModel $boxModel');
       // Save the box using the data source
       final boxId = await boxDatasource.insertBox(boxModel);
