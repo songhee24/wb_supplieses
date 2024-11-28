@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/bloc/box_bloc.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/bloc/supplies_bloc.dart';
 import 'package:wb_supplieses/features/supplieses/presentation/widgets/box/box_form_bottom_sheet.dart';
 
 class SuppliesInnerBoxCard extends StatefulWidget {
@@ -26,7 +27,10 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
           isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
-            return BoxFormBottomSheet(suppliesId: widget.suppliesId!, boxEntity: widget.boxEntity,);
+            return BoxFormBottomSheet(
+              suppliesId: widget.suppliesId!,
+              boxEntity: widget.boxEntity,
+            );
           });
     }
   }
@@ -56,11 +60,11 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
       },
     );
 
-    if (confirmed == true && widget.boxEntity.id != null) {
-      // ignore: use_build_context_synchronously
-      // context.read<SuppliesBloc>().add(
-      //   SuppliesDeleteEvent(suppliesId: supplies.id!),
-      // );
+    if (confirmed == true && widget.boxEntity.id != null && context.mounted) {
+      context.read<BoxBloc>().add(
+            BoxDeleteEvent(boxId: widget.boxEntity.id!),
+          );
+      context.read<SuppliesBloc>().add(BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId!));
     }
   }
 
