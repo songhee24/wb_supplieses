@@ -59,7 +59,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     try {
       emit(BoxManageLoading());
 
-      if (event.boxEntity != null) {
+      if (event.boxEntity == null) {
         throw Exception(
             'Failed to create box: the event.boxEntity is ${event.boxEntity}');
       } else {
