@@ -50,3 +50,12 @@ final class SuppliesDeleteEvent extends SuppliesEvent {
   @override
   List<Object> get props => [suppliesId];
 }
+
+class BoxesBySuppliesIdEvent extends SuppliesEvent {
+  final String suppliesId;
+
+  BoxesBySuppliesIdEvent({required this.suppliesId});
+
+  @override
+  List<Object> get props => [suppliesId];
+}

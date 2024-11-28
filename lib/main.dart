@@ -32,7 +32,7 @@ Future<void> main() async {
       create: (_) => SuppliesTabIndexCubit(),
     ),
     BlocProvider(
-      create: (_) => SuppliesBloc(suppliesRepository),
+      create: (_) => SuppliesBloc(suppliesRepository: suppliesRepository, boxRepository: boxFirestoreRepositoryImpl),
     ),
     BlocProvider(
       create: (_) => BoxBloc(boxRepository: boxFirestoreRepositoryImpl),

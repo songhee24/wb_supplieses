@@ -1,10 +1,7 @@
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 
 import '../../domain/entities/supplies_entity.dart';
@@ -19,10 +16,9 @@ class SuppliesesInnerPage extends StatefulWidget {
 }
 
 class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
-
   @override
   void initState() {
-    context.read<BoxBloc>().add(
+    context.read<SuppliesBloc>().add(
         (BoxesBySuppliesIdEvent(suppliesId: '${widget.suppliesEntity!.id}')));
     super.initState();
   }
@@ -85,16 +81,18 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  BlocBuilder<BoxBloc, BoxState>(
+                                  BlocBuilder<SuppliesBloc, SuppliesState>(
                                     builder: (context, state) {
-                                      if (state is BoxesBySuppliesIdSuccess) {
+                                      if (state.suppliesStatus == SuppliesStatus.success) {
                                         return Text(
-                                          '${state.boxEntities?.length ?? 0}', // Dynamically get box count
+                                          '${state.boxEntities?.length ?? 0}',
+                                          // Dynamically get box count
                                           style: const TextStyle(fontSize: 16),
                                         );
                                       }
                                       return const Text(
-                                        '0', // Default value when no data is available
+                                        '0',
+                                        // Default value when no data is available
                                         style: TextStyle(fontSize: 16),
                                       );
                                     },
@@ -117,9 +115,8 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
               ),
             ),
           ),
-          BlocBuilder<BoxBloc, BoxState>(
+          BlocBuilder<SuppliesBloc, SuppliesState>(
             builder: (context, state) {
-              print(state);
               if (state is BoxError) {
                 // Show an error dialog and also return a sliver widget
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -134,9 +131,9 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                             color: Colors.black.withOpacity(.6),
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(12.0))),
-                        child: Text(
-                          state.message,
-                          style: const TextStyle(color: Colors.redAccent),
+                        child: const Text(
+                          'Что то пошло не так блять',
+                          style: TextStyle(color: Colors.redAccent),
                         ),
                       ),
                     ),
@@ -147,7 +144,15 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                 return const SliverToBoxAdapter(
                   child: SizedBox.shrink(),
                 );
-              } else if (state is BoxesBySuppliesIdSuccess) {
+              } else if (state.suppliesStatus == SuppliesStatus.success) {
+                if(state.boxEntities != null && state.boxEntities!.isEmpty) {
+                  return const SliverToBoxAdapter(
+                    child: Center(
+                      child: Text('Коробов нет'),
+                    ),
+                  );
+                }
+
                 // Update the boxCount using a StatefulBuilder or setState safely
                 // WidgetsBinding.instance.addPostFrameCallback((_) {
                 //   setState(() {

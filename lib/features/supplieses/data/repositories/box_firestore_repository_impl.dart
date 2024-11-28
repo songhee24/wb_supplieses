@@ -35,14 +35,14 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
         id: null, // ID will be assigned after saving
         suppliesId: suppliesId,
         boxNumber: boxNumber,
-        productModels: [],
+        // productModels: [],
       );
 
       final boxDocRef =
           await _firestore.collection('boxes').add(initialBox.toMap());
       final boxId = boxDocRef.id;
 
-      final boxWithId = initialBox.copyWith(id: boxId);
+      // final boxWithId = initialBox.copyWith(id: boxId);
 
       // Map ProductEntities to ProductModels and then to Firestore-friendly format
       // Step 2: Save Product Models
@@ -154,7 +154,7 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
         }).toList(),
       );
 
-      print('createBox boxModel $boxModel');
+      // print('createBox boxModel $boxModel');
       // Save the box using the data source
       final boxId = await boxDatasource.insertBox(boxModel);
 

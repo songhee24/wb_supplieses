@@ -3,18 +3,36 @@ import 'package:equatable/equatable.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/domain/repositories/supplies_repository.dart';
 
+import '../../domain/entities/box_entity.dart';
+import '../../domain/repositories/box_repository.dart';
+
 part 'supplies_event.dart';
 part 'supplies_state.dart';
 
 class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
   final SuppliesRepository suppliesRepository;
+  final BoxRepository boxRepository;
 
-  SuppliesBloc(this.suppliesRepository) : super(const SuppliesState()) {
+  SuppliesBloc({required this.suppliesRepository, required this.boxRepository}) : super(const SuppliesState()) {
     on<SuppliesGetEvent>(_onGetSupplies);
     on<SuppliesDeleteEvent>(_onDeleteSupplies);
     on<SuppliesGetByIdEvent>(_onGetSupplyById);
     on<SuppliesEditEvent>(_onEditSupply);
     on<SuppliesCreateNewEvent>(_onAddNewSupplies);
+    on<BoxesBySuppliesIdEvent>(_onGetBoxesBySuppliesId);
+  }
+
+  Future<void> _onGetBoxesBySuppliesId(
+      BoxesBySuppliesIdEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      List<BoxEntity> boxEntities =
+      await boxRepository.getBoxesBySuppliesId(event.suppliesId);
+      // emit(BoxesBySuppliesIdSuccess(boxEntities: boxEntities));
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.success, boxEntities: boxEntities));
+    } catch (e) {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
   }
 
   Future<void> _onAddNewSupplies(

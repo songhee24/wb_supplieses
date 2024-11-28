@@ -15,11 +15,11 @@ class BoxSearchProductsEvent extends BoxEvent {
   List<Object> get props => [query];
 }
 
-class BoxesBySuppliesIdEvent extends BoxEvent {
-  final String suppliesId;
-
-  BoxesBySuppliesIdEvent({required this.suppliesId});
-}
+// class BoxesBySuppliesIdEvent extends BoxEvent {
+//   final String suppliesId;
+//
+//   BoxesBySuppliesIdEvent({required this.suppliesId});
+// }
 
 class BoxCreateEvent extends BoxEvent {
   final BoxEntity? boxEntity;
@@ -29,3 +29,14 @@ class BoxCreateEvent extends BoxEvent {
   @override
   List<Object?> get props => [boxEntity];
 }
+
+// class BoxCreateAndFetchedBySuppliesIdEvent extends BoxEvent {
+//   final String suppliesId;
+//   final BoxEntity? boxEntity;
+//   final bool isGetBoxesEnabled;
+//
+//   BoxCreateAndFetchedBySuppliesIdEvent({this.boxEntity, required this.suppliesId, this.isGetBoxesEnabled = false});
+//
+//   @override
+//   List<Object?> get props => [boxEntity, suppliesId];
+// }

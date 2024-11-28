@@ -46,6 +46,13 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
       });
       _selectedProducts.add(null);
     });
+    context.read<BoxBloc>().add(
+          BoxCreateEvent(
+            boxEntity: BoxEntity(
+                boxNumber: _boxNumberController.text,
+                suppliesId: widget.suppliesId),
+          ),
+        );
   }
 
   void _addSearchField() {
@@ -142,35 +149,50 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: _controllers.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final controllers = _controllers[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: BoxSearchInputSelector(
-                                      textController: controllers['text']!,
-                                      sizeController: controllers['size']!,
-                                      onProductSelected: (p) {
-                                        _onProductSelected(index, p);
-                                        BoxEntity boxEntity = BoxEntity(
-                                            boxNumber:
-                                                _boxNumberController.text,
-                                            suppliesId: widget.suppliesId,
-                                            productEntities: _selectedProducts
-                                                .where((el) => el != null)
-                                                .cast<ProductEntity>()
-                                                .toList());
+                            BlocBuilder<BoxBloc, BoxState>(
+                              builder: (context, state) {
+                                print('state $state');
 
-                                        context.read<BoxBloc>().add(
-                                              BoxCreateEvent(
-                                                  boxEntity: boxEntity),
-                                            );
-                                        context.read<BoxBloc>().add(
-                                            (BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId)));
-                                      }),
+                                return ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: _controllers.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final controllers = _controllers[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: BoxSearchInputSelector(
+                                        textController: controllers['text']!,
+                                        sizeController: controllers['size']!,
+                                        onProductSelected: (p) {
+                                          _onProductSelected(index, p);
+
+                                          BoxEntity boxEntity = BoxEntity(
+                                              boxNumber:
+                                                  _boxNumberController.text,
+                                              suppliesId: widget.suppliesId,
+                                              productEntities: _selectedProducts
+                                                  .where((el) => el != null)
+                                                  .cast<ProductEntity>()
+                                                  .toList());
+
+                                          // context.read<BoxBloc>().add(
+                                          //       BoxCreateAndFetchedBySuppliesIdEvent(
+                                          //         boxEntity: boxEntity,
+                                          //         suppliesId: widget.suppliesId,
+                                          //       ),
+                                          //     );
+                                          context.read<BoxBloc>().add(
+                                                BoxCreateEvent(
+                                                    boxEntity: boxEntity),
+                                              );
+                                          context.read<SuppliesBloc>().add(
+                                              (BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId)));
+                                        },
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),

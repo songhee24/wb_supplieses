@@ -77,7 +77,8 @@ class SuppliesCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
           onTap: () {
             // context.read<SuppliesTabIndexCubit>().setTabIndex(-1);
-            context.push('${PathKeys.supplieses()}/${supplies.id}/boxes', extra: supplies);
+            var res = context.push<bool>('${PathKeys.supplieses()}/${supplies.id}/boxes', extra: supplies);
+            print('res $res');
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
