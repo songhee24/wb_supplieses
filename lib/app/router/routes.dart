@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:wb_supplieses/app/layout/layout_scaffold.dart';
-import 'package:wb_supplieses/features/database/database.dart';
+import 'package:wb_supplieses/features/exel_products/database.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/lib/router/config.dart';
 
@@ -20,8 +21,9 @@ class Routes {
                 GoRoute(
                   path: PathKeys.boxes(),
                   builder: (context, state) {
-                    final suppliesId = state.pathParameters['suppliesId'];
-                    return SuppliesesInnerPage(suppliesId: suppliesId!);
+                    // final suppliesId = state.pathParameters['suppliesId'];
+                    final supplies = state.extra != null ? state.extra as SuppliesEntity : null;
+                    return SuppliesesInnerPage(suppliesEntity: supplies,);
                   },
                 )
               ],

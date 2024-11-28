@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wb_supplieses/app/router/bottom_destination.dart';
-import 'package:wb_supplieses/features/supplieses/bloc/supplies_tab_index_cubit.dart';
-import 'package:wb_supplieses/features/supplieses/widgets/supplies/supplies_form_bottom_sheet.dart';
+import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/bloc/supplies_tab_index_cubit.dart';
+import 'package:wb_supplieses/features/supplieses/presentation/widgets/widgets.dart';
 
 class LayoutScaffold extends StatelessWidget {
   const LayoutScaffold(
@@ -28,12 +29,21 @@ class LayoutScaffold extends StatelessWidget {
       backgroundColor: Colors.transparent,
       // Add FloatingActionButton
       floatingActionButton: navigationShell.currentIndex == 0
-      // TODO refactor BlocBuilder use navigationShell or GoRouterState
+          // TODO refactor BlocBuilder use navigationShell or GoRouterState
           ? BlocBuilder<SuppliesTabIndexCubit, int>(
               builder: (context, selectedTabIndex) {
                 return FloatingActionButton(
                   onPressed: () {
                     if (suppliesId != null) {
+                      final suppliesEntity = state.extra as SuppliesEntity;
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return BoxFormBottomSheet(
+                              suppliesEntity: suppliesEntity,
+                            );
+                          });
                     } else if (selectedTabIndex == 0) {
                       showModalBottomSheet(
                           isScrollControlled: true,
@@ -41,9 +51,7 @@ class LayoutScaffold extends StatelessWidget {
                           builder: (BuildContext context) {
                             return const SuppliesFormBottomSheet();
                           });
-                    } else if (selectedTabIndex == 1) {
-                      // Action for the second tab
-                    }
+                    } else if (selectedTabIndex == 1) {}
                   },
                   child: const Icon(Icons.add),
                 );
