@@ -25,7 +25,28 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
   final List<Map<String, TextEditingController>> _controllers = [];
   final List<ProductEntity?> _selectedProducts = [];
   final TextEditingController _boxNumberController =
-      TextEditingController(text: '1');
+      TextEditingController(text: '0');
+
+  void _onBoxNumberChanged() {
+    // Only trigger the event if boxEntity's id is null
+    if (widget.boxEntity?.id != null && _boxNumberController.text.isNotEmpty) {
+      final boxEntity = BoxEntity(
+        id: widget.boxEntity?.id,
+        boxNumber: _boxNumberController.text,
+        suppliesId: widget.suppliesId,
+        productEntities: _selectedProducts
+            .where((el) => el != null)
+            .cast<ProductEntity>()
+            .toList(), // Adjust based on your logic
+      );
+
+      // Dispatch events to the Bloc
+      context.read<BoxBloc>().add(BoxCreateEvent(boxEntity: boxEntity));
+      context
+          .read<SuppliesBloc>()
+          .add(BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId));
+    }
+  }
 
   @override
   void dispose() {
@@ -35,7 +56,26 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
         controller.dispose();
       }
     }
+    _boxNumberController.removeListener(_onBoxNumberChanged);
     _boxNumberController.dispose();
+
+    // if (widget.boxEntity?.id == null) {
+    //   BoxEntity boxEntity = BoxEntity(
+    //     id: widget.boxEntity?.id,
+    //     boxNumber: _boxNumberController.text,
+    //     suppliesId: widget.suppliesId,
+    //     productEntities: _selectedProducts
+    //         .where((el) => el != null)
+    //         .cast<ProductEntity>()
+    //         .toList(),
+    //   );
+    //
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     context.read<BoxBloc>().add(BoxCreateEvent(boxEntity: boxEntity));
+    //     context.read<SuppliesBloc>().add(
+    //         BoxesBySuppliesIdEvent(suppliesId: widget.suppliesId));
+    //   });
+    // }
     super.dispose();
   }
 
@@ -49,6 +89,13 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
     //   });
     //   _selectedProducts.add(null);
     // });
+    // Set initial value if needed
+    // if (widget.boxEntity?.boxNumber != null) {
+    //   _boxNumberController.text = widget.boxEntity!.boxNumber!;
+    // }
+
+    // Add listener to TextEditingController
+    _boxNumberController.addListener(_onBoxNumberChanged);
 
     if (widget.boxEntity?.id == null) {
       context.read<BoxBloc>().add(
@@ -69,10 +116,10 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
           _selectedProducts.addAll(widget.boxEntity!.productEntities!);
 
           widget.boxEntity?.productEntities?.forEach((p) {
-              _controllers.add({
-                'text': TextEditingController(),
-                'size': TextEditingController(),
-              });
+            _controllers.add({
+              'text': TextEditingController(),
+              'size': TextEditingController(),
+            });
           });
         }
       });
@@ -97,9 +144,8 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-
     print('_boxId $_boxId');
-    print('_selectedProducts $_selectedProducts');
+    // print('_selectedProducts $_selectedProducts');
     double sheetHeight = MediaQuery.of(context).size.height;
     return BlocListener<BoxBloc, BoxState>(
       listener: (context, state) {
@@ -249,7 +295,8 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                         child: BoxSearchInputSelector(
                                           textController: controllers['text']!,
                                           sizeController: controllers['size']!,
-                                          initialProduct: _selectedProducts[index],
+                                          initialProduct:
+                                              _selectedProducts[index],
                                           onProductSelected: (p) {
                                             if (_boxId == null) {
                                               WidgetsBinding.instance
@@ -293,16 +340,15 @@ class _BoxFormBottomSheetState extends State<BoxFormBottomSheet> {
                                             _onProductSelected(index, p);
 
                                             BoxEntity boxEntity = BoxEntity(
-                                                id: _boxId,
-                                                boxNumber: _boxNumberController
-                                                    .text,
-                                                suppliesId: widget.suppliesId,
-                                                productEntities:
-                                                    _selectedProducts
-                                                        .where(
-                                                            (el) => el != null)
-                                                        .cast<ProductEntity>()
-                                                        .toList());
+                                              id: _boxId,
+                                              boxNumber:
+                                                  _boxNumberController.text,
+                                              suppliesId: widget.suppliesId,
+                                              productEntities: _selectedProducts
+                                                  .where((el) => el != null)
+                                                  .cast<ProductEntity>()
+                                                  .toList(),
+                                            );
 
                                             // context.read<BoxBloc>().add(
                                             //       BoxCreateAndFetchedBySuppliesIdEvent(
