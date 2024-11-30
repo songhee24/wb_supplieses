@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wb_supplieses/features/supplieses/data/models/box_model.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/box_entity.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 
 final class SuppliesModel extends SuppliesEntity {
-  const SuppliesModel({super.boxes, super.id, super.boxCount, required super.createdAt, required super.name, required super.status});
+  const SuppliesModel({super.boxes, super.id, super.boxCount, required super.createdAt, required super.name, required super.status,});
 
   Map<String, dynamic> toMap() {
     return {
@@ -31,7 +32,9 @@ final class SuppliesModel extends SuppliesEntity {
     return SuppliesModel(
       name: map['name'],
       boxCount: map['boxCount'],
-      boxes: map['boxes'],
+      boxes:map['boxes'] != null ? (map['boxes'] as List<dynamic>)
+          .map((box) => BoxModel.fromMap(box as Map<String, dynamic>))
+          .toList() : [],
       createdAt: (map['created_at'] as Timestamp).toDate(),
       status: map['status'],
     );

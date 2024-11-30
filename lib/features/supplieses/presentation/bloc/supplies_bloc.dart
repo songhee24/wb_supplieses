@@ -20,6 +20,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
     on<SuppliesEditEvent>(_onEditSupply);
     on<SuppliesCreateNewEvent>(_onAddNewSupplies);
     on<BoxesBySuppliesIdEvent>(_onGetBoxesBySuppliesId);
+    on<UpdateSuppliesBoxCountEvent>(_onUpdateSuppliesBoxCount);
   }
 
   Future<void> _onGetBoxesBySuppliesId(
@@ -31,6 +32,24 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       // emit(BoxesBySuppliesIdSuccess(boxEntities: boxEntities));
       emit(state.copyWith(suppliesStatus: SuppliesStatus.success, boxEntities: boxEntities));
     } catch (e) {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
+  }
+
+  Future<void> _onUpdateSuppliesBoxCount(UpdateSuppliesBoxCountEvent event, Emitter<SuppliesState> emit) async {
+    try{
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      List<BoxEntity> boxEntities =
+      await boxRepository.getBoxesBySuppliesId(event.suppliesEntity.id!);
+      await suppliesRepository.editSupply(event.suppliesEntity.id!, SuppliesEntity(createdAt: event.suppliesEntity.createdAt, name: event.suppliesEntity.name, boxCount: boxEntities.length, status: 'created', boxes: boxEntities));
+
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.successEdit,
+        supplieses: suppliesList,
+        boxEntities: boxEntities,
+      ));
+    } catch(e) {
       emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
     }
   }

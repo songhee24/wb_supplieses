@@ -30,11 +30,11 @@ class BoxModel extends BoxEntity {
   factory BoxModel.fromMap(Map<String, dynamic> map) {
     return BoxModel(
         id: map['id'] as String?,
-        productModels: (map['productEntity'] as List<dynamic>)
+        productModels: map['productEntity'] != null ? (map['productEntity'] as List<dynamic>)
             .map((productMap) =>
                 ProductModel.fromMap(productMap as Map<String, dynamic>))
-            .toList(),
-        boxNumber: map['boxNumber'],
+            .toList(): [],
+        boxNumber: map['boxNumber'] ?? 0,
         suppliesId: map['suppliesId']);
   }
 

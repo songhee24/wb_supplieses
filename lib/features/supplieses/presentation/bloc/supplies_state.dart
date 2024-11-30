@@ -14,7 +14,7 @@ final class SuppliesState extends Equatable {
     this.suppliesStatus = SuppliesStatus.initial,
     this.supplieses = const <SuppliesEntity>[],
     this.selectedSupply,
-    this.boxEntities,
+    this.boxEntities = const <BoxEntity>[],
   });
 
   SuppliesState copyWith({

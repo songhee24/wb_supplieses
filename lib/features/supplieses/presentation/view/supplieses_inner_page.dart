@@ -16,11 +16,19 @@ class SuppliesesInnerPage extends StatefulWidget {
 }
 
 class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
+  late final SuppliesBloc _suppliesBloc;
+
   @override
   void initState() {
-    context.read<SuppliesBloc>().add(
-        (BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity!)));
     super.initState();
+    _suppliesBloc = context.read<SuppliesBloc>();
+    _suppliesBloc.add(BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity!));
+  }
+
+  @override
+  void dispose() {
+    _suppliesBloc.add(UpdateSuppliesBoxCountEvent(suppliesEntity: widget.suppliesEntity!));
+    super.dispose();
   }
 
   @override
@@ -172,7 +180,9 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                       childCount: state.boxEntities?.length ?? 0,
                       (BuildContext context, int index) {
                         final box = state.boxEntities![index];
-                        return SuppliesInnerBoxCard(boxEntity: box, suppliesEntity: widget.suppliesEntity);
+                        return SuppliesInnerBoxCard(
+                            boxEntity: box,
+                            suppliesEntity: widget.suppliesEntity);
                       },
                     ),
                     gridDelegate:
@@ -191,11 +201,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
               }
 
               // For loading or unexpected states, return a placeholder Sliver
-              return const SliverToBoxAdapter(
-                child: Center(
-                  child: Text('Что-то пошло не так...'),
-                ),
-              );
+              return const SliverToBoxAdapter(child: Center());
             },
           )
         ],
