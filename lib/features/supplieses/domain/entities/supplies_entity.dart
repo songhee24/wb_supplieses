@@ -13,5 +13,5 @@ class SuppliesEntity extends Equatable {
   const SuppliesEntity({this.id, this.boxCount, this.boxes = const <BoxEntity>[],  required this.createdAt, required this.name, this.status = 'created'});
 
   @override
-  List<Object?> get props  => [id, boxCount, createdAt, status];
+  List<Object?> get props  => [id, boxCount, createdAt, status, boxes];
 }

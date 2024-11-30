@@ -122,7 +122,7 @@ class SuppliesCard extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text('${supplies.boxes?.length}'),
+                                Text('${supplies.boxCount}'),
                                 const SizedBox(width: 4),
                                 Image.asset(
                                   'lib/assets/box.png',

@@ -59,3 +59,13 @@ class BoxesBySuppliesIdEvent extends SuppliesEvent {
   @override
   List<Object> get props => [suppliesEntity];
 }
+
+class UpdateSuppliesBoxCountEvent extends SuppliesEvent {
+  final SuppliesEntity suppliesEntity;
+
+  UpdateSuppliesBoxCountEvent({required this.suppliesEntity});
+
+
+  @override
+  List<Object> get props => [suppliesEntity];
+}
