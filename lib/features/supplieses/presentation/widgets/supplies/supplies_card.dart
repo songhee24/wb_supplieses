@@ -75,10 +75,10 @@ class SuppliesCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
-          onTap: () {
+          onTap: supplies.status == 'created' ?  () {
             // context.read<SuppliesTabIndexCubit>().setTabIndex(-1);
             context.push<bool>('${PathKeys.supplieses()}/${supplies.id}/boxes', extra: supplies);
-          },
+          } : null ,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
             child: BackdropFilter(

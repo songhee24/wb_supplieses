@@ -21,6 +21,23 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
     on<SuppliesCreateNewEvent>(_onAddNewSupplies);
     on<BoxesBySuppliesIdEvent>(_onGetBoxesBySuppliesId);
     on<UpdateSuppliesBoxCountEvent>(_onUpdateSuppliesBoxCount);
+    on<SuppliesShipBoxesEvent>(_onShipSupplyWithBox);
+  }
+
+
+  Future<void> _onShipSupplyWithBox(SuppliesShipBoxesEvent event, Emitter<SuppliesState> emit) async {
+    try {
+      emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
+      await suppliesRepository.sendSupplyToExtension(suppliesId: event.suppliesEntity.id!, boxes: event.boxEntities);
+      final suppliesList = await suppliesRepository.getSupplies();
+      emit(state.copyWith(
+        suppliesStatus: SuppliesStatus.successEdit,
+        supplieses: suppliesList,
+        boxEntities: [],
+      ));
+    } catch(e) {
+      emit(const SuppliesState(suppliesStatus: SuppliesStatus.failure));
+    }
   }
 
   Future<void> _onGetBoxesBySuppliesId(

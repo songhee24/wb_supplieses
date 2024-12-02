@@ -5,6 +5,13 @@ sealed class SuppliesEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class SuppliesShipBoxesEvent extends SuppliesEvent {
+  final List<BoxEntity> boxEntities;
+  final SuppliesEntity suppliesEntity;
+
+  SuppliesShipBoxesEvent({required this.suppliesEntity, required this.boxEntities});
+}
+
 final class SuppliesCreateNewEvent extends SuppliesEvent {
   final int boxCount;
   final String name;

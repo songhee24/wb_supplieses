@@ -16,6 +16,8 @@ class SuppliesesInnerPage extends StatefulWidget {
 }
 
 class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
+  bool supplyShipped = false;
+
   late final SuppliesBloc _suppliesBloc;
 
   @override
@@ -28,8 +30,10 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
 
   @override
   void dispose() {
-    _suppliesBloc.add(
-        UpdateSuppliesBoxCountEvent(suppliesEntity: widget.suppliesEntity!));
+    if (!supplyShipped) {
+      _suppliesBloc.add(
+          UpdateSuppliesBoxCountEvent(suppliesEntity: widget.suppliesEntity!));
+    }
     super.dispose();
   }
 
@@ -129,26 +133,67 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 12, right: 16, left: 16),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child:  const Text('Поделиться поставкой', style: TextStyle(fontSize: 13),),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Отправить поставку'),
-                    ),
-                  ),
-                ],
-              ),
+              child: BlocBuilder<SuppliesBloc, SuppliesState>(
+                  builder: (context, state) {
+                if (state.suppliesStatus == SuppliesStatus.success && state.boxEntities!.isNotEmpty) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text(
+                            'Поделиться поставкой',
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 1,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (widget.suppliesEntity?.boxes == null ||
+                                state.boxEntities!.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  contentPadding: EdgeInsets.zero,
+                                  backgroundColor: Colors.transparent,
+                                  insetPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  content: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(.6),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(12.0))),
+                                    child: const Text(
+                                      textAlign: TextAlign.center,
+                                      'Коробов нет',
+                                      style: TextStyle(color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+
+                            setState(() {
+                              supplyShipped = true;
+                            });
+                            _suppliesBloc.add(SuppliesShipBoxesEvent(
+                                suppliesEntity: widget.suppliesEntity!,
+                                boxEntities: widget.suppliesEntity!.boxes!));
+                          },
+                          child: const Text('Отправить поставку'),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                return const Center();
+              }),
             ),
           ),
           BlocBuilder<SuppliesBloc, SuppliesState>(
