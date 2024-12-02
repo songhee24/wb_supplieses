@@ -8,7 +8,6 @@ import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entit
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
 import 'package:wb_supplieses/shared/lib/router/config.dart';
 
-
 class SuppliesCard extends StatelessWidget {
   final SuppliesEntity supplies;
 
@@ -75,10 +74,14 @@ class SuppliesCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
-          onTap: supplies.status == 'created' ?  () {
-            // context.read<SuppliesTabIndexCubit>().setTabIndex(-1);
-            context.push<bool>('${PathKeys.supplieses()}/${supplies.id}/boxes', extra: supplies);
-          } : null ,
+          onTap: supplies.status == 'created'
+              ? () {
+                  // context.read<SuppliesTabIndexCubit>().setTabIndex(-1);
+                  context.push<bool>(
+                      '${PathKeys.supplieses()}/${supplies.id}/boxes',
+                      extra: supplies);
+                }
+              : null,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
             child: BackdropFilter(
@@ -89,14 +92,23 @@ class SuppliesCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(12)),
                   // border: Border.all(color: Color(0xFF235F75), width: 1),
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.black,
-                      Colors.black54,
-                    ],
-                  ),
+                  gradient: supplies.status == 'created'
+                      ? const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.black,
+                            Colors.black54,
+                          ],
+                        )
+                      : const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.black54,
+                            Colors.deepPurple,
+                          ],
+                        ),
                   color: Colors.grey[350]!.withOpacity(0.4),
                 ),
                 child: Padding(
@@ -140,50 +152,61 @@ class SuppliesCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Cозданно:',
-                                    style: TextStyle(color: Colors.grey)),
-                                Text(
-                                    '${formattedDate.split(" ")[0]} '
-                                    ' ${formattedDate.split(" ")[1]}',
-                                    style: const TextStyle(color: Colors.grey)),
-                              ]),
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: PopupMenuButton(
-                              onSelected: (value) {
-                                if (value == 'delete') {
-                                  _showDeleteConfirmation(context);
-                                }
-                                if (value == 'edit') {
-                                  _onGetSuppliesById(context);
-                                }
-                              },
-                              padding: EdgeInsets.zero,
-                              iconSize: 20,
-                              icon: const Icon(Icons.more_vert),
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  const PopupMenuItem(
-                                      value: 'delete',
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      child: Text('Удалить')),
-                                  const PopupMenuItem(
-                                      value: 'edit',
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      child: Text('Изменить'))
-                                ];
-                              },
-                            ),
-                          )
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  supplies.status == 'created'
+                                      ? 'Cоздано:'
+                                      : 'Отправлено',
+                                  style: TextStyle(
+                                      fontWeight: supplies.status == 'created'
+                                          ? FontWeight.w400
+                                          : FontWeight.bold,
+                                      color: supplies.status == 'created'
+                                          ? Colors.grey
+                                          : Colors.green[200])),
+                              Text(
+                                  '${formattedDate.split(" ")[0]} '
+                                  ' ${formattedDate.split(" ")[1]}',
+                                  style: const TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                          if (supplies.status == 'created')
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: PopupMenuButton(
+                                onSelected: (value) {
+                                  if (value == 'delete') {
+                                    _showDeleteConfirmation(context);
+                                  }
+                                  if (value == 'edit') {
+                                    _onGetSuppliesById(context);
+                                  }
+                                },
+                                padding: EdgeInsets.zero,
+                                iconSize: 20,
+                                icon: const Icon(Icons.more_vert),
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    const PopupMenuItem(
+                                        value: 'delete',
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
+                                        ),
+                                        child: Text('Удалить')),
+                                    const PopupMenuItem(
+                                        value: 'edit',
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
+                                        ),
+                                        child: Text('Изменить'))
+                                  ];
+                                },
+                              ),
+                            )
                         ],
                       ),
                     ],

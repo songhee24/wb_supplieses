@@ -114,7 +114,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       SuppliesGetEvent event, Emitter<SuppliesState> emit) async {
     try {
       emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
-      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
+      final suppliesList = await suppliesRepository.getSupplies(status: event.status);
       emit(state.copyWith(
           suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {

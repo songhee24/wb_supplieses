@@ -25,10 +25,11 @@ class _SuppliesesPageState extends State<SuppliesesPage>
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         context.read<SuppliesTabIndexCubit>().setTabIndex(_tabController.index);
+        context.read<SuppliesBloc>().add(SuppliesGetEvent(status: _tabController.index == 0 ?  'created': 'shipped'));
       }
     });
 
-    context.read<SuppliesBloc>().add(SuppliesGetEvent(status: 'created'));
+    context.read<SuppliesBloc>().add(SuppliesGetEvent(status: _tabController.index == 0 ?  'created': 'shipped'));
   }
 
   @override
@@ -51,7 +52,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
               // this required Future<void> Function
               context
                   .read<SuppliesBloc>()
-                  .add(SuppliesGetEvent(status: 'created'));
+                  .add(SuppliesGetEvent(status: _tabController.index == 0 ?  'created': 'shipped'));
               return Future.value(true);
             },
           ),
@@ -62,12 +63,8 @@ class _SuppliesesPageState extends State<SuppliesesPage>
               animation: _tabController,
               builder: (context, child) {
                 return _tabController.index == 0
-                    ? _buildSupplyTabContent()
-                    : const SliverToBoxAdapter(
-                        child: Center(
-                          child: Text('box'),
-                        ),
-                      );
+                    ? _buildSupplyTabContent(status: 'created')
+                    : _buildSupplyTabContent(status: 'shipped');
               },
             ),
           )
@@ -76,7 +73,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
     );
   }
 
-  Widget _buildSupplyTabContent() {
+  Widget _buildSupplyTabContent({required String status}) {
     return BlocBuilder<SuppliesBloc, SuppliesState>(
       builder: (context, state) {
         if (state.suppliesStatus == SuppliesStatus.loading) {
@@ -103,7 +100,7 @@ class _SuppliesesPageState extends State<SuppliesesPage>
                     onPressed: () {
                       context
                           .read<SuppliesBloc>()
-                          .add(SuppliesGetEvent(status: 'created'));
+                          .add(SuppliesGetEvent(status: status));
                     },
                     child: const Text('Retry'),
                   ),
