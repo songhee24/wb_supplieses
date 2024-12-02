@@ -22,12 +22,14 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
   void initState() {
     super.initState();
     _suppliesBloc = context.read<SuppliesBloc>();
-    _suppliesBloc.add(BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity!));
+    _suppliesBloc
+        .add(BoxesBySuppliesIdEvent(suppliesEntity: widget.suppliesEntity!));
   }
 
   @override
   void dispose() {
-    _suppliesBloc.add(UpdateSuppliesBoxCountEvent(suppliesEntity: widget.suppliesEntity!));
+    _suppliesBloc.add(
+        UpdateSuppliesBoxCountEvent(suppliesEntity: widget.suppliesEntity!));
     super.dispose();
   }
 
@@ -37,7 +39,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
       resizeToAvoidBottomInset: true,
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        // physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
             toolbarHeight: kToolbarHeight * 1.7,
@@ -121,6 +123,31 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12, right: 16, left: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child:  const Text('Поделиться поставкой', style: TextStyle(fontSize: 13),),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('Отправить поставку'),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

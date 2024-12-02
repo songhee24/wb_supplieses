@@ -18,6 +18,7 @@ class SuppliesInnerBoxCard extends StatefulWidget {
 }
 
 class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
+
   Future<void> _onGetBoxById(BuildContext context) async {
     if (widget.boxEntity.id != null && widget.suppliesEntity != null) {
       BlocProvider.of<BoxBloc>(context).add(
@@ -76,6 +77,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
       (sum, product) => sum + product.count,
     );
     return Container(
+
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         // border: Border.all(color: const Color(0xFF3C006A), width: 1),
@@ -167,7 +169,7 @@ class _SuppliesInnerBoxCardState extends State<SuppliesInnerBoxCard> {
                 ],
               ),
             ),
-            Expanded(
+            if(totalQuantity != 0) Expanded(
               child: Card(
                 shape: const RoundedRectangleBorder(
                   borderRadius:
