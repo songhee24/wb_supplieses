@@ -29,7 +29,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
     try {
       emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
       await suppliesRepository.sendSupplyToExtension(suppliesId: event.suppliesEntity.id!, boxes: event.boxEntities);
-      final suppliesList = await suppliesRepository.getSupplies(status: 'shipped');
+      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
       emit(state.copyWith(
         suppliesStatus: SuppliesStatus.successEdit,
         supplieses: suppliesList,
