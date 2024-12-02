@@ -29,7 +29,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
     try {
       emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
       await suppliesRepository.sendSupplyToExtension(suppliesId: event.suppliesEntity.id!, boxes: event.boxEntities);
-      final suppliesList = await suppliesRepository.getSupplies();
+      final suppliesList = await suppliesRepository.getSupplies(status: 'shipped');
       emit(state.copyWith(
         suppliesStatus: SuppliesStatus.successEdit,
         supplieses: suppliesList,
@@ -60,7 +60,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       await boxRepository.getBoxesBySuppliesId(event.suppliesEntity.id!);
       await suppliesRepository.editSupply(event.suppliesEntity.id!, SuppliesEntity(createdAt: event.suppliesEntity.createdAt, name: event.suppliesEntity.name, boxCount: boxEntities.length, status: 'created', boxes: boxEntities));
 
-      final suppliesList = await suppliesRepository.getSupplies();
+      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
       emit(state.copyWith(
         suppliesStatus: SuppliesStatus.successEdit,
         supplieses: suppliesList,
@@ -84,7 +84,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       );
       await suppliesRepository.addSupply(newSupply);
 
-      final suppliesList = await suppliesRepository.getSupplies();
+      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
       emit(state.copyWith(
           suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {
@@ -100,7 +100,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
 
       await suppliesRepository.editSupply(event.suppliesId, event.updatedSupply);
 
-      final suppliesList = await suppliesRepository.getSupplies();
+      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
       emit(state.copyWith(
         suppliesStatus: SuppliesStatus.successEdit,
         supplieses: suppliesList,
@@ -114,7 +114,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       SuppliesGetEvent event, Emitter<SuppliesState> emit) async {
     try {
       emit(state.copyWith(suppliesStatus: SuppliesStatus.loading));
-      final suppliesList = await suppliesRepository.getSupplies();
+      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
       emit(state.copyWith(
           suppliesStatus: SuppliesStatus.success, supplieses: suppliesList));
     } catch (e) {
@@ -133,7 +133,7 @@ class SuppliesBloc extends Bloc<SuppliesEvent, SuppliesState> {
       await suppliesRepository.deleteSupply(event.suppliesId);
 
       // Refresh the supplies list after deletion
-      final suppliesList = await suppliesRepository.getSupplies();
+      final suppliesList = await suppliesRepository.getSupplies(status: 'created');
 
       emit(state.copyWith(
         suppliesStatus: SuppliesStatus.success,

@@ -184,7 +184,7 @@ class _SuppliesesInnerPageState extends State<SuppliesesInnerPage> {
                             });
                             _suppliesBloc.add(SuppliesShipBoxesEvent(
                                 suppliesEntity: widget.suppliesEntity!,
-                                boxEntities: widget.suppliesEntity!.boxes!));
+                                boxEntities: state.boxEntities!));
                           },
                           child: const Text('Отправить поставку'),
                         ),
