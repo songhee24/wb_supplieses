@@ -53,9 +53,9 @@ class SuppliesCard extends StatelessWidget {
       TextCellValue('Product Name'),
       TextCellValue('Category'),
       TextCellValue('Brand'),
-      TextCellValue('Barcode'),
       TextCellValue('Size'),
       TextCellValue('Russian Size'),
+      TextCellValue('Barcode'),
       TextCellValue('Count'),
     ]);
 
@@ -69,10 +69,10 @@ class SuppliesCard extends StatelessWidget {
         TextCellValue(product.productName),
         TextCellValue(product.category),
         TextCellValue(product.brand),
-        TextCellValue(product.barcode),
         TextCellValue(product.size),
         TextCellValue(product.russianSize),
-        DoubleCellValue(product.count.toDouble()),
+        TextCellValue(product.barcode),
+        IntCellValue(product.count.toInt()),
       ]);
     }
 
