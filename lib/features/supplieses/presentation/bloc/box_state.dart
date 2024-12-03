@@ -23,6 +23,15 @@ class BoxSearchSuccess extends BoxState {
   List<Object?> get props => [products];
 }
 
+class BoxCombinedProductsSuccess extends BoxState {
+  final List<ProductEntity?> products;
+
+  const BoxCombinedProductsSuccess({required this.products});
+
+  @override
+  List<Object?> get props => [products];
+}
+
 class BoxGetByIdSuccess extends BoxState {
   final BoxEntity? boxEntity;
 

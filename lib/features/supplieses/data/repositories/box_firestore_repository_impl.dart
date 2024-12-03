@@ -198,4 +198,13 @@ class BoxFirestoreRepositoryImpl implements BoxRepository {
       throw Exception('Failed to delete box by id: $e');
     }
   }
+
+  @override
+  Future<List<ProductEntity>> getCombinedProductsBySuppliesId(String suppliesId) async {
+    try {
+      return await boxDatasource.getCombinedProductsBySuppliesId(suppliesId);
+    } catch(e) {
+      throw Exception('Failed to get products for exel by suppliesId:$suppliesId  error:$e');
+    }
+  }
 }

@@ -48,6 +48,15 @@ class BoxDeleteEvent extends BoxEvent {
   List<Object?> get props => [boxId];
 }
 
+class BoxGetCombinedProductsBySuppliesIdEvent extends BoxEvent {
+  final String suppliesId;
+
+  BoxGetCombinedProductsBySuppliesIdEvent({required this.suppliesId});
+
+  @override
+  List<Object?> get props => [suppliesId];
+}
+
 // class BoxCreateAndFetchedBySuppliesIdEvent extends BoxEvent {
 //   final String suppliesId;
 //   final BoxEntity? boxEntity;

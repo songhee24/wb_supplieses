@@ -1,11 +1,17 @@
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:wb_supplieses/features/supplieses/domain/entities/supplies_entity.dart';
 import 'package:wb_supplieses/features/supplieses/supplieses.dart';
+import 'package:wb_supplieses/shared/entities/product_entity.dart';
 import 'package:wb_supplieses/shared/lib/router/config.dart';
 
 class SuppliesCard extends StatelessWidget {
@@ -27,6 +33,65 @@ class SuppliesCard extends StatelessWidget {
               suppliesId: supplies.id,
             );
           });
+    }
+  }
+
+
+
+  Future<void> exportToExcel(String suppliesId, List<ProductEntity> products) async {
+    // Create a new Excel workbook
+    final excel = Excel.createExcel();
+
+    // Create a sheet and add headers
+    final sheet = excel['Products'];
+
+    sheet.appendRow([
+      TextCellValue('Group ID'),
+      TextCellValue('Box ID'),
+      TextCellValue('Sellers Article'),
+      TextCellValue('Article WB'),
+      TextCellValue('Product Name'),
+      TextCellValue('Category'),
+      TextCellValue('Brand'),
+      TextCellValue('Barcode'),
+      TextCellValue('Size'),
+      TextCellValue('Russian Size'),
+      TextCellValue('Count'),
+    ]);
+
+    // Add products to the sheet
+    for (final product in products) {
+      sheet.appendRow([
+        TextCellValue(product.groupId ?? ""),
+        TextCellValue(product.boxId ?? ""),
+        TextCellValue(product.sellersArticle),
+        TextCellValue(product.articleWB),
+        TextCellValue(product.productName),
+        TextCellValue(product.category),
+        TextCellValue(product.brand),
+        TextCellValue(product.barcode),
+        TextCellValue(product.size),
+        TextCellValue(product.russianSize),
+        DoubleCellValue(product.count.toDouble()),
+      ]);
+    }
+
+    // Get the temporary directory
+    final tempDir = await getTemporaryDirectory();
+    final fileName = '${suppliesId}_products.xlsx';
+    final filePath = join(tempDir.path, fileName);
+
+    // Save the file
+    final fileBytes = excel.save();
+    if (fileBytes != null) {
+      final file = File(filePath);
+      await file.writeAsBytes(fileBytes);
+
+      // Share the file using share_plus
+      await Share.shareXFiles([XFile(filePath)], text: 'Here is your Excel file: $fileName');
+      print('Excel file shared: $filePath');
+    } else {
+      throw Exception('Failed to generate Excel file');
     }
   }
 
@@ -205,6 +270,46 @@ class SuppliesCard extends StatelessWidget {
                                         child: Text('Изменить'))
                                   ];
                                 },
+                              ),
+                            )
+                          else
+                            BlocListener<BoxBloc,BoxState>(
+                              listener: (context, state) async {
+                                if(state is BoxError) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                     SnackBar(content: Text(state.message, style: const TextStyle(color: Colors.pink),)),
+                                  );
+                                }
+
+                                if (state is BoxCombinedProductsSuccess) {
+                                  final products = state.products.whereType<ProductEntity>().toList();
+
+                                  await exportToExcel(supplies.id!, products);
+
+                                  // Show success notification
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Excel file has been exported successfully!')),
+                                  );
+                                }
+                              },
+                              child: BlocBuilder<BoxBloc,BoxState>(
+                                builder: (context, state) {
+                                  print(state);
+                                  return SizedBox(
+                                    width: 25,
+                                    height: 25,
+                                    child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      iconSize: 25,
+                                      onPressed: () {
+                                        // Dispatch the event to fetch products
+                                        context.read<BoxBloc>().add(BoxGetCombinedProductsBySuppliesIdEvent(suppliesId: '${supplies.id}'));
+
+                                      },
+                                      icon: const Icon(Icons.file_download),
+                                    ),
+                                  );
+                                }
                               ),
                             )
                         ],

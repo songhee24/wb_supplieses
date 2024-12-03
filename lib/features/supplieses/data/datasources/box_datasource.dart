@@ -262,4 +262,68 @@ class BoxDatasource {
     });
   }
 
+  Future<List<ProductModel>> getCombinedProductsBySuppliesId(String suppliesId) async {
+
+    // Fetch all boxes related to the given suppliesId
+    final boxes = await db.query(
+      'box',
+      columns: ['id'],
+      where: 'supplies_id = ?',
+      whereArgs: [suppliesId],
+    );
+
+    if (boxes.isEmpty) {
+      print('No boxes found for suppliesId: $suppliesId');
+      return [];
+    }
+
+    // Extract box IDs
+    final boxIds = boxes.map((box) => box['id']?.toString()).toList();
+
+    // Fetch all products from box_products related to those box IDs
+    final products = await db.query(
+      'box_products',
+      where: 'box_id IN (${boxIds.map((_) => '?').join(', ')})',
+      whereArgs: boxIds,
+    );
+
+    if (products.isEmpty) {
+      print('No products found for boxes of suppliesId: $suppliesId');
+      return [];
+    }
+
+    // Combine products by barcode
+    final Map<String, ProductModel> combinedProducts = {};
+
+    for (final product in products) {
+      final barcode = product['barcode'] as String;
+      final count = product['count'] as int;
+
+      if (combinedProducts.containsKey(barcode)) {
+        // Increment count for existing product
+        combinedProducts[barcode] = combinedProducts[barcode]!.copyWith(
+          count: combinedProducts[barcode]!.count + count,
+        );
+      } else {
+        // Add new product to map
+        combinedProducts[barcode] = ProductModel(
+          id: product['id'] as int?,
+          groupId: product['group_id'] as String?,
+          boxId: product['box_id'] as String?,
+          sellersArticle: product['sellers_article'] as String,
+          articleWB: product['article_wb'] as String,
+          productName: product['product_name'] as String,
+          category: product['category'] as String,
+          brand: product['brand'] as String,
+          barcode: barcode,
+          size: product['size'] as String,
+          russianSize: product['russian_size'] as String,
+          count: count,
+        );
+      }
+    }
+
+    return combinedProducts.values.toList();
+  }
+
 }

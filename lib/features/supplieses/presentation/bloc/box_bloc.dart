@@ -23,6 +23,18 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     on<BoxCreateEvent>(_onBoxCreate);
     on<BoxEditEvent>(_onBoxEdit);
     on<BoxDeleteEvent>(_onBoxDelete);
+    on<BoxGetCombinedProductsBySuppliesIdEvent>(_onGetCombinedProductsBySuppliesId);
+  }
+
+
+  Future<void> _onGetCombinedProductsBySuppliesId (BoxGetCombinedProductsBySuppliesIdEvent event, Emitter<BoxState> emit) async {
+    try {
+      emit(BoxManageLoading());
+      List<ProductEntity> products = await boxRepository.getCombinedProductsBySuppliesId(event.suppliesId);
+      emit(BoxCombinedProductsSuccess(products: products));
+    } catch(e) {
+      emit(BoxError(e.toString()));
+    }
   }
 
   Future<void> _onBoxDelete(BoxDeleteEvent event,
